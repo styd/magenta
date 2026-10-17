@@ -1,0 +1,42 @@
+# cron / crond lines in syslog.
+name = "cron"
+detect = [
+  '^[A-Z][a-z]{2}\s+\d{1,2} \d\d:\d\d:\d\d \S+ (?:CRON|CROND|cron|crond)\[\d+\]:',
+  '^\d{4}-\d\d-\d\dT[\d:.]+(?:[+-]\d\d:\d\d|Z) \S+ (?:CRON|CROND|cron|crond)\[\d+\]:',
+]
+filenames = ["cron*.log", "cron"]
+sample = [
+  'Oct  6 10:00:01 web1 CRON[1234]: (root) CMD (/usr/local/bin/backup.sh --full)',
+  'Oct  6 10:05:01 web1 CROND[1301]: (deploy) CMD (run-parts /etc/cron.hourly)',
+  'Oct  6 10:06:00 web1 crond[900]: (root) RELOAD (/var/spool/cron/root)',
+  '2026-10-06T10:00:01.123456+02:00 web1 CRON[1234]: pam_unix(cron:session): session opened for user root by (uid=0)',
+  'Oct  6 10:07:00 web1 CRON[1500]: (root) ERROR (failed to open /etc/crontab: Permission denied)',
+]
+
+[[context.default.rule]]
+regex = '^([A-Z][a-z]{2}\s+\d{1,2} \d\d:\d\d:\d\d) (\S+) (CRON|CROND|cron|crond)\[(\d+)\]:'
+captures = ["timestamp", "name", "key", "pid"]
+
+[[context.default.rule]]
+regex = '^(\d{4}-\d\d-\d\dT[\d:.]+(?:[+-]\d\d:\d\d|Z)) (\S+) (CRON|CROND|cron|crond)\[(\d+)\]:'
+captures = ["timestamp", "name", "key", "pid"]
+
+[[context.default.rule]]
+regex = '\((\w[\w.-]*)\) (CMD|RELOAD|BEGIN EDIT|REPLACE|DELETE|LIST|END EDIT|STARTUP|INFO|ERROR)\b'
+captures = ["name", "key"]
+
+[[context.default.rule]]
+regex = ' CMD \((.*)\)\s*$'
+captures = ["command"]
+
+[[context.default.rule]]
+regex = '(?i)\b(?:error|failed|failure|denied)\b'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '\b(uid)=(\d+)'
+captures = ["key", "number"]
+
+[[context.default.rule]]
+regex = '(?:^|[\s(=\[])(/[\w./@%+~-]+)'
+captures = ["path"]

@@ -1,0 +1,51 @@
+# JSON Lines: one JSON object per line.
+name = "jsonl"
+detect = ['^\s*\{\s*"[^"]+"\s*:']
+filenames = ["*.jsonl", "*.ndjson", "*.json.log"]
+sample = [
+  '{"time":"2026-10-06T10:00:00Z","level":"info","msg":"server started","port":8080,"tls":false}',
+  '{"time":"2026-10-06T10:00:01Z","level":"error","msg":"db \"timeout\"","retry":null,"took":1.5e3}',
+  '{"level":"warn","msg":"slow","ms":420}',
+  '{"level":"debug","msg":"x"}',
+  '{"level":"fatal","msg":"x"}',
+]
+
+[[context.default.rule]]
+regex = '"(?:time|timestamp|ts|@timestamp|t)"\s*:\s*("[^"]*"|\d+(?:\.\d+)?)'
+captures = ["timestamp"]
+
+[[context.default.rule]]
+regex = '"(?:level|severity|lvl)"\s*:\s*("(?i:fatal|panic|critical|crit)")'
+captures = ["level.fatal"]
+
+[[context.default.rule]]
+regex = '"(?:level|severity|lvl)"\s*:\s*("(?i:error|err)")'
+captures = ["level.error"]
+
+[[context.default.rule]]
+regex = '"(?:level|severity|lvl)"\s*:\s*("(?i:warn|warning)")'
+captures = ["level.warn"]
+
+[[context.default.rule]]
+regex = '"(?:level|severity|lvl)"\s*:\s*("(?i:info|notice)")'
+captures = ["level.info"]
+
+[[context.default.rule]]
+regex = '"(?:level|severity|lvl)"\s*:\s*("(?i:debug|trace)")'
+captures = ["level.debug"]
+
+[[context.default.rule]]
+regex = '("(?:[^"\\]|\\.)*")\s*:'
+captures = ["key"]
+
+[[context.default.rule]]
+regex = '"(?:[^"\\]|\\.)*"'
+scope = "string"
+
+[[context.default.rule]]
+regex = '-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b'
+scope = "number"
+
+[[context.default.rule]]
+regex = '\b(?:true|false|null)\b'
+scope = "constant"

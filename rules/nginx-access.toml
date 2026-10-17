@@ -1,0 +1,38 @@
+# nginx (and Apache) access logs in the combined format.
+name = "nginx-access"
+detect = ['^\S+ \S+ \S+ \[\d\d/\w{3}/\d{4}:\d\d:\d\d:\d\d [+-]\d{4}\] "']
+filenames = ["nginx*access*.log", "access.log", "access_log"]
+sample = [
+  '203.0.113.7 - - [06/Oct/2026:10:00:00 +0000] "GET /index.html HTTP/1.1" 200 612 "-" "Mozilla/5.0"',
+  '203.0.113.7 - alice [06/Oct/2026:10:00:01 +0000] "POST /login HTTP/2.0" 302 0 "https://example.com/" "curl/8.4"',
+  '198.51.100.2 - - [06/Oct/2026:10:00:02 +0000] "GET /missing HTTP/1.1" 404 153 "-" "Go-http-client/1.1"',
+  '198.51.100.2 - - [06/Oct/2026:10:00:03 +0000] "GET /api/v1/items?id=3 HTTP/1.1" 502 157 "-" "-"',
+]
+
+[[context.default.rule]]
+regex = '^(\S+) \S+ (?:-|(\S+)) \[([^\]]+)\] "([A-Z]+) (\S+) (HTTP/[\d.]+)"'
+captures = ["ip", "name", "timestamp", "http.method", "path", "constant"]
+
+[[context.default.rule]]
+regex = '" (1\d\d|2\d\d) (?:\d+|-)(?: |$)'
+captures = ["http.status.2xx"]
+
+[[context.default.rule]]
+regex = '" (3\d\d) (?:\d+|-)(?: |$)'
+captures = ["http.status.3xx"]
+
+[[context.default.rule]]
+regex = '" (4\d\d) (?:\d+|-)(?: |$)'
+captures = ["http.status.4xx"]
+
+[[context.default.rule]]
+regex = '" (5\d\d) (?:\d+|-)(?: |$)'
+captures = ["http.status.5xx"]
+
+[[context.default.rule]]
+regex = '" \d{3} (\d+)(?: |$)'
+captures = ["number"]
+
+[[context.default.rule]]
+regex = '\b[a-z][a-z0-9+.-]*://[^\s"<>)\]]+'
+scope = "url"

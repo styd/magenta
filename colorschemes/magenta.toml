@@ -1,0 +1,121 @@
+# The magenta colorscheme. Purple leads, then light yellow, then light blue, with
+# a soft rose for errors. Despite the name there is no magenta in it.
+#
+# The theme picks the palette: dark or light. Every color that a style uses is
+# named in the palette, so a copy of this file can be tweaked in one place.
+# Roles:
+#   background, mantle   the base and the alternate background of the screen
+#   surface0, surface2   the search bar, and a stronger surface (selections)
+#   text                 plain text
+#   comment              timestamps, dates, meta lines
+#   keyword, operator    purple, for words that structure a line, and punctuation
+#   symbol, param        keys, and their values
+#   function             yellow, for the things to look at first
+#   string, number       paths, URLs and quoted text, and numbers
+#   type                 names and classes, light blue
+#   error                rose
+#   magenta              the one magenta, for fzf's marker and its hints
+name = "magenta"
+
+[palette.dark]
+background = "#1f1933"
+mantle     = "#19142a"
+surface0   = "#2d2547"
+surface2   = "#4e437a"
+text       = "#e4dcf7"
+comment    = "#9a8cc6"
+keyword    = "#c3a6ff"
+operator   = "#a98bf0"
+symbol     = "#e0b8ff"
+function   = "#f7e08a"
+string     = "#fbf3c8"
+number     = "#f2d49b"
+type       = "#b4daff"
+param      = "#9fc8f7"
+error      = "#f28fb0"
+magenta    = "#e66bc0"
+
+[palette.light]
+background = "#f7f3ff"
+mantle     = "#efe9fb"
+surface0   = "#ded4f2"
+surface2   = "#bfaedd"
+text       = "#2a2040"
+comment    = "#6a5a99"
+keyword    = "#6b3fd4"
+operator   = "#7a4be0"
+symbol     = "#a23fc4"
+function   = "#8a6500"
+string     = "#6b6000"
+number     = "#a35f00"
+type       = "#174f9c"
+param      = "#2f6fc0"
+error      = "#c0305f"
+magenta    = "#ae1e81"
+
+[styles]
+# Keys and values
+"key"             = { fg = "symbol" }
+"value"           = { fg = "param" }
+
+# Levels
+"level.letter"    = { fg = "comment" }
+"level.debug"     = { fg = "comment" }
+"level.info"      = { fg = "type" }
+"level.warn"      = { fg = "function" }
+"level.error"     = { fg = "error", bold = true }
+"level.fatal"     = { fg = "error", bold = true }
+
+# Times, places, and numbers
+"timestamp"       = { fg = "comment" }
+"pid"             = { fg = "number" }
+"uuid"            = { fg = "number" }
+"ip"              = { fg = "param" }
+"url"             = { fg = "string" }
+"path"            = { fg = "string" }
+"number"          = { fg = "number" }
+"duration"        = { fg = "number" }
+"string"          = { fg = "string" }
+
+# Names
+"constant"        = { fg = "keyword" }
+"name"            = { fg = "type" }
+"command"         = { fg = "function" }
+"sql.keyword"     = { fg = "keyword" }
+"exception.class" = { fg = "type" }
+"stack.frame"     = { fg = "comment" }
+
+# HTTP
+"http.method"     = { fg = "keyword" }
+"http.status.2xx" = { fg = "type" }
+"http.status.3xx" = { fg = "param" }
+"http.status.4xx" = { fg = "function" }
+"http.status.5xx" = { fg = "error" }
+
+# git log
+"git.hash"        = { fg = "function" }
+"git.ref"         = { fg = "keyword" }
+"git.author"      = { fg = "type" }
+
+# git diff
+"diff.header"     = { fg = "function" }
+"diff.meta"       = { fg = "comment" }
+"diff.hunk"       = { fg = "keyword" }
+"diff.hunk.context" = { fg = "type" }
+"diff.added"      = { fg = "type" }
+"diff.removed"    = { fg = "error" }
+"diff.context"    = { fg = "text" }
+
+# mgnt's own screen. ui.background is the terminal's text and background while
+# the pager or the / search is open. The other ui styles color fzf, which draws
+# the search: ui.search is its search bar, ui.current the line under the cursor,
+# ui.marker its marker and pointer, ui.hint the keys on top, ui.info the count,
+# and ui.border its lines. Without them, mgnt keeps the colors of your terminal
+# and fzf keeps its own.
+"ui.background"   = { fg = "text", bg = "background" }
+"ui.search"       = { fg = "text", bg = "surface0" }
+"ui.current"      = { fg = "text", bg = "surface2" }
+"ui.marker"       = { fg = "magenta" }
+"ui.hint"         = { fg = "magenta" }
+"ui.info"         = { fg = "comment" }
+"ui.border"       = { fg = "surface2" }

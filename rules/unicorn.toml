@@ -1,0 +1,61 @@
+# Unicorn (and Puma-style Ruby Logger) server logs.
+name = "unicorn"
+detect = ['^[IWEFDA], \[\d{4}-\d\d-\d\dT[\d:.]+ #\d+\]\s+\w+ -- : (?:master|worker=\d|reaped|listening on|Refreshing Gem list|executing|unlinking|killing|forked child|spawning|app error|timeout|received)']
+filenames = ["unicorn*.log", "unicorn.stderr.log"]
+sample = [
+  'I, [2026-10-06T10:00:00.123 #4242]  INFO -- : worker=0 ready',
+  'D, [2026-10-06T10:00:00.456 #4242] DEBUG -- : listening on addr=0.0.0.0:3000 fd=9',
+  'W, [2026-10-06T10:00:01.789 #4242]  WARN -- : timeout (61s > 60s), killing worker=2 pid=4300',
+  "E, [2026-10-06T10:00:02.000 #4242] ERROR -- : app error: undefined method `name' for nil:NilClass (NoMethodError)",
+  "E, [2026-10-06T10:00:02.001 #4242] ERROR -- : /app/models/user.rb:12:in `name'",
+  'F, [2026-10-06T10:00:03.000 #4242] FATAL -- : master process died',
+]
+
+[[context.default.rule]]
+regex = '^([IWEFDA]), \[([^\]]+) #(\d+)\]'
+captures = ["level.letter", "timestamp", "pid"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(DEBUG) -- '
+captures = ["level.debug"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(INFO) -- '
+captures = ["level.info"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(WARN) -- '
+captures = ["level.warn"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(ERROR) -- '
+captures = ["level.error"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(FATAL) -- '
+captures = ["level.fatal"]
+
+[[context.default.rule]]
+regex = '\(((?:\w+::)*\w*(?:Error|Exception))\)'
+captures = ["exception.class"]
+
+# Backtrace lines carry the logger prefix too.
+[[context.default.rule]]
+regex = ' -- : (\S+:\d+:in .*)$'
+captures = ["stack.frame"]
+
+[[context.default.rule]]
+regex = '\b[a-z][a-z0-9+.-]*://[^\s"<>)\]]+'
+scope = "url"
+
+[[context.default.rule]]
+regex = '\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?\b'
+scope = "ip"
+
+[[context.default.rule]]
+regex = '\b([a-z_][\w]*)='
+captures = ["key"]
+
+[[context.default.rule]]
+regex = '\b\d+(?:\.\d+)?s?\b'
+scope = "number"

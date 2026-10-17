@@ -1,0 +1,99 @@
+# git log, with or without --oneline, --graph, --stat, and -p.
+name = "git-log"
+detect = [
+  '^commit [0-9a-f]{40}',
+  '^Author: .* <.*>',
+  '^Date:   ',
+  '^(?:[|\\/ ]*\* )?[0-9a-f]{7,40} \(.*(?:HEAD|origin/|tag: ).*\)',
+]
+filenames = ["git-log*.txt", "*.gitlog"]
+sample = [
+  'commit 3f2a8c1e0b1d4c8e9a531f2e3d4c5b6a7e8f9a0b (HEAD -> main, origin/main, tag: v1.2.0)',
+  'Author: Ada Lovelace <ada@example.com>',
+  'Date:   Mon Oct 5 10:00:00 2026 +0200',
+  'Merge: 1a2b3c4 5d6e7f8',
+  '3f2a8c1 (HEAD -> main) Fix the parser, closes #42',
+  '* 3f2a8c1 Add feature',
+  ' lib/parser.go | 12 ++++++------',
+  'diff --git a/lib/parser.go b/lib/parser.go',
+  '@@ -10,6 +10,7 @@ func parse() {',
+  '+added',
+  '-removed',
+]
+
+[[context.default.rule]]
+regex = '^(commit) ([0-9a-f]{7,40})\b'
+captures = ["git.hash", "git.hash"]
+
+[[context.default.rule]]
+regex = '^(?:commit [0-9a-f]{7,40}|(?:[|\\/ ]*\* )?[0-9a-f]{7,40}) \(([^)]+)\)'
+captures = ["git.ref"]
+
+[[context.default.rule]]
+regex = '^(Author:)\s+(.*?)\s+(<[^>]*>)'
+captures = ["git.author", "git.author", "git.author"]
+
+[[context.default.rule]]
+regex = '^(Date:)\s+(.*)$'
+captures = ["timestamp", "timestamp"]
+
+[[context.default.rule]]
+regex = '^(Merge:)\s+(.*)$'
+captures = ["git.hash", "git.hash"]
+
+[[context.default.rule]]
+regex = '^(?:[|\\/ ]*\* )?([0-9a-f]{7,40}) '
+captures = ["git.hash"]
+
+[[context.default.rule]]
+regex = '^ (.+?)\s+\|\s+(\d+) (\+*)(-*)$'
+captures = ["path", "number", "diff.added", "diff.removed"]
+
+[[context.default.rule]]
+regex = '(?:^|\s)(#\d+)\b'
+captures = ["number"]
+
+# git log -p: the diff parts use the same rules as git-diff.
+[[context.default.rule]]
+regex = '^diff .*'
+scope = "diff.header"
+
+[[context.default.rule]]
+regex = '^(?:index|new file mode|deleted file mode|old mode|new mode|similarity index|rename from|rename to|copy from|copy to|Binary files) .*'
+scope = "diff.meta"
+
+[[context.default.rule]]
+regex = '^(?:---|\+\+\+) .*'
+scope = "diff.header"
+
+[[context.default.rule]]
+regex = '^(@@ [^@]+ @@)(.*)$'
+captures = ["diff.hunk", "diff.hunk.context"]
+
+[[context.default.enter]]
+regex = '^@@ '
+to = "hunk"
+
+[[context.hunk.rule]]
+regex = '^(@@ [^@]+ @@)(.*)$'
+captures = ["diff.hunk", "diff.hunk.context"]
+stop = true
+
+[[context.hunk.rule]]
+prefix = "+"
+scope = "diff.added"
+
+[[context.hunk.rule]]
+prefix = "-"
+scope = "diff.removed"
+
+[[context.hunk.rule]]
+prefix = " "
+scope = "diff.context"
+
+[[context.hunk.rule]]
+prefix = '\'
+scope = "diff.meta"
+
+[[context.hunk.exit]]
+unless = '^(?:[-+ @\\]|$)'

@@ -1,0 +1,113 @@
+# Rails request logs (development and tagged production logs).
+name = "rails"
+detect = [
+  '\bStarted (?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) "',
+  '^Processing by \w+(?:::\w+)*#\w+ as ',
+  '^Completed \d{3} ',
+  '^\s+(?:\S+ )+\((?:Views: )?\d+(?:\.\d+)?ms\)',
+]
+filenames = ["development.log", "production.log", "staging.log", "test.log"]
+sample = [
+  'Started GET "/users/42?tab=posts" for 127.0.0.1 at 2026-10-06 10:00:00 +0000',
+  'Processing by UsersController#show as HTML',
+  '  Parameters: {"id"=>"42", "tab"=>"posts"}',
+  '  User Load (0.4ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2',
+  '  Rendered users/show.html.erb within layouts/application (Duration: 12.3ms | Allocations: 4021)',
+  'Completed 200 OK in 45ms (Views: 30.1ms | ActiveRecord: 2.0ms)',
+  'Completed 500 Internal Server Error in 12ms',
+  "NoMethodError (undefined method `name' for nil:NilClass):",
+  "app/controllers/users_controller.rb:5:in `show'",
+  'I, [2026-10-06T10:00:00.123456 #1234]  INFO -- : [3f2a8c1e-0b1d-4c8e-9a53-1f2e3d4c5b6a] Started POST "/login" for ::1 at 2026-10-06 10:00:00 +0000',
+]
+
+[[context.default.rule]]
+regex = '^([IWEFDA]), \[([^\]]+) #(\d+)\]'
+captures = ["level.letter", "timestamp", "pid"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(DEBUG) -- '
+captures = ["level.debug"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(INFO) -- '
+captures = ["level.info"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(WARN) -- '
+captures = ["level.warn"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(ERROR) -- '
+captures = ["level.error"]
+
+[[context.default.rule]]
+regex = '^[IWEFDA], \[[^\]]+\]\s+(FATAL) -- '
+captures = ["level.fatal"]
+
+[[context.default.rule]]
+regex = '\b(Started) (GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) "([^"]*)" for (\S+) at (\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?: [+-]\d{4}| UTC)?)'
+captures = ["key", "http.method", "path", "ip", "timestamp"]
+
+[[context.default.rule]]
+regex = '^(Processing by) (\w+(?:::\w+)*#\w+) as (\w+)'
+captures = ["key", "name", "constant"]
+
+[[context.default.rule]]
+regex = '^\s+(Parameters:)\s+(.*)$'
+captures = ["key", "value"]
+
+[[context.default.rule]]
+regex = '\b(Completed) (2\d\d [A-Za-z ]+?) in (\d+(?:\.\d+)?ms)'
+captures = ["key", "http.status.2xx", "duration"]
+
+[[context.default.rule]]
+regex = '\b(Completed) (3\d\d [A-Za-z ]+?) in (\d+(?:\.\d+)?ms)'
+captures = ["key", "http.status.3xx", "duration"]
+
+[[context.default.rule]]
+regex = '\b(Completed) (4\d\d [A-Za-z ]+?) in (\d+(?:\.\d+)?ms)'
+captures = ["key", "http.status.4xx", "duration"]
+
+[[context.default.rule]]
+regex = '\b(Completed) (5\d\d [A-Za-z ]+?) in (\d+(?:\.\d+)?ms)'
+captures = ["key", "http.status.5xx", "duration"]
+
+[[context.default.rule]]
+regex = '\b(Rendered|Rendering) (\S+)'
+captures = ["key", "path"]
+
+[[context.default.rule]]
+regex = '\((?:Views: |ActiveRecord: |Duration: |Allocations: )?(\d+(?:\.\d+)?ms)'
+captures = ["duration"]
+
+[[context.default.rule]]
+regex = '"(?:[^"\\]|\\.)*"'
+scope = "string"
+
+[[context.default.rule]]
+regex = '\b(?:SELECT|INSERT INTO|UPDATE|DELETE FROM|FROM|WHERE|LEFT JOIN|INNER JOIN|JOIN|ORDER BY|GROUP BY|LIMIT|VALUES|BEGIN|COMMIT|ROLLBACK)\b'
+scope = "sql.keyword"
+
+[[context.default.rule]]
+regex = '^((?:[A-Z]\w*::)*[A-Z]\w*(?:Error|Exception))\b'
+captures = ["exception.class"]
+
+[[context.default.rule]]
+regex = '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
+scope = "uuid"
+
+# A Ruby exception line is followed by its backtrace.
+[[context.default.enter]]
+regex = '^(?:[A-Z]\w*::)*[A-Z]\w*(?:Error|Exception)\b'
+to = "backtrace"
+
+[[context.backtrace.rule]]
+regex = '^.*:\d+:in .*$'
+scope = "stack.frame"
+
+[[context.backtrace.rule]]
+regex = '^\s+\d+: .*$'
+scope = "stack.frame"
+
+[[context.backtrace.exit]]
+unless = '^\s*$|:\d+:in |^\s+\d+: '

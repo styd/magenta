@@ -1,0 +1,23 @@
+# Bold, dim, and underline only: no hue. It has no palette, so the theme
+# setting (dark or light) makes no difference to it.
+name = "mono"
+
+[styles]
+"key"             = { bold = true }
+"level.letter"    = { dim = true }
+"level.debug"     = { dim = true }
+"level.warn"      = { bold = true }
+"level.error"     = { bold = true, underline = true }
+"level.fatal"     = { bold = true, underline = true }
+"timestamp"       = { dim = true }
+"url"             = { underline = true }
+"path"            = { underline = true }
+"http.status.4xx" = { bold = true }
+"http.status.5xx" = { bold = true, underline = true }
+"git.ref"         = { bold = true }
+"diff.header"     = { bold = true }
+"diff.meta"       = { dim = true }
+"diff.hunk"       = { bold = true }
+"diff.removed"    = { dim = true }
+"exception.class" = { bold = true }
+"stack.frame"     = { dim = true }

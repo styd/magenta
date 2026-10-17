@@ -1,0 +1,66 @@
+# git diff, git show, and unified diffs in general.
+name = "git-diff"
+detect = [
+  '^diff --git ',
+  '^@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@',
+  '^(?:---|\+\+\+) \S',
+  '^index [0-9a-f]{7,40}\.\.[0-9a-f]{7,40}',
+]
+filenames = ["*.diff", "*.patch"]
+sample = [
+  'diff --git a/lib/parser.go b/lib/parser.go',
+  'index 3f2a8c1..9d4e5f6 100644',
+  '--- a/lib/parser.go',
+  '+++ b/lib/parser.go',
+  '@@ -10,6 +10,7 @@ func parse() {',
+  '+added line',
+  '-removed line',
+]
+
+[[context.default.rule]]
+regex = '^diff .*'
+scope = "diff.header"
+
+[[context.default.rule]]
+regex = '^(?:index|new file mode|deleted file mode|old mode|new mode|similarity index|rename from|rename to|copy from|copy to|Binary files) .*'
+scope = "diff.meta"
+
+[[context.default.rule]]
+regex = '^(?:---|\+\+\+) .*'
+scope = "diff.header"
+
+[[context.default.rule]]
+regex = '^(@@ [^@]+ @@)(.*)$'
+captures = ["diff.hunk", "diff.hunk.context"]
+
+# Inside a hunk a line is classified by its first byte, so lines such as
+# "--- x" (a removed line "-- x") are not mistaken for file headers.
+[[context.default.enter]]
+regex = '^@@ '
+to = "hunk"
+
+[[context.hunk.rule]]
+regex = '^(@@ [^@]+ @@)(.*)$'
+captures = ["diff.hunk", "diff.hunk.context"]
+stop = true
+
+[[context.hunk.rule]]
+prefix = "+"
+scope = "diff.added"
+
+[[context.hunk.rule]]
+prefix = "-"
+scope = "diff.removed"
+
+[[context.hunk.rule]]
+prefix = " "
+scope = "diff.context"
+
+[[context.hunk.rule]]
+prefix = '\'
+scope = "diff.meta"
+
+# Any other line (a new "diff --git", a "commit" line, ...) ends the hunk and
+# is processed again in the default context.
+[[context.hunk.exit]]
+unless = '^(?:[-+ @\\]|$)'
