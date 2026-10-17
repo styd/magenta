@@ -1,0 +1,37 @@
+commit 3f2a8c1e0b1d4c8e9a531f2e3d4c5b6a7e8f9a0b (HEAD -> main, origin/main, tag: v1.2.0)
+Author: Ada Lovelace <ada@example.com>
+Date:   Mon Oct 5 10:00:00 2026 +0200
+
+    Fix the parser, closes #42
+
+    The old code was wrong.
+
+ lib/parser.go | 12 ++++++------
+ lib/lexer.go  |  3 +++
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+commit 1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d
+Merge: 9f8e7d6 5c4b3a2
+Author: Grace Hopper <grace@example.com>
+Date:   Sun Oct 4 09:00:00 2026 +0200
+
+    Merge branch 'feature'
+
+commit 9f8e7d6c5b4a39281706f5e4d3c2b1a098765432
+Author: Ada Lovelace <ada@example.com>
+Date:   Sat Oct 3 08:00:00 2026 +0200
+
+    Add lexer
+
+diff --git a/lib/lexer.go b/lib/lexer.go
+new file mode 100644
+index 0000000..3f2a8c1
+--- /dev/null
++++ b/lib/lexer.go
+@@ -0,0 +1,3 @@ package lib
++package lib
++
++func lex() {}
+3f2a8c1 (HEAD -> main) Fix the parser
+* 9f8e7d6 Add lexer
+| * 5c4b3a2 (origin/feature) WIP

@@ -1,0 +1,7 @@
+2026-10-06 10:00:00,123 INFO [main] Starting application on 10.0.0.12:8080
+2026-10-06 10:00:01,004 DEBUG [pool-1] cache warm, entries=1024 took=35ms
+2026-10-06 10:00:02,500 WARN [pool-2] slow query user="alice" path=/var/lib/app/data.db took 1.5s
+2026-10-06T10:00:03Z ERROR request 3f2a8c1e-0b1d-4c8e-9a53-1f2e3d4c5b6a failed: https://example.com/api/v1?x=1 returned 503
+Oct  6 10:00:04 host sshd[812]: FATAL cannot bind to 0.0.0.0:22
+plain line with no special tokens at all
+tab	separated	10	20.5	99%

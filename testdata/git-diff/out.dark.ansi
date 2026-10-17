@@ -1,0 +1,25 @@
+[38;2;247;224;138mdiff --git a/lib/parser.go b/lib/parser.go[0m
+[38;2;154;140;198mindex 3f2a8c1..9d4e5f6 100644[0m
+[38;2;247;224;138m--- a/lib/parser.go[0m
+[38;2;247;224;138m+++ b/lib/parser.go[0m
+[38;2;195;166;255m@@ -10,6 +10,7 @@[0m[38;2;180;218;255m func parse(in string) error {[0m
+[38;2;228;220;247m 	tokens := lex(in)[0m
+[38;2;242;143;176m-	if len(tokens) == 0 {[0m
+[38;2;180;218;255m+	if len(tokens) < 1 {[0m
+[38;2;228;220;247m 		return errEmpty[0m
+[38;2;228;220;247m 	}[0m
+[38;2;242;143;176m--- a trailing dash comment is a removed line[0m
+[38;2;180;218;255m+++ plus plus plus is an added line[0m
+[38;2;228;220;247m [0m
+[38;2;195;166;255m@@ -40,3 +41,4 @@[0m[38;2;180;218;255m func render() {[0m
+[38;2;228;220;247m 	out := build()[0m
+[38;2;180;218;255m+	log.Println(out)[0m
+[38;2;154;140;198m\ No newline at end of file[0m
+[38;2;247;224;138mdiff --git a/README.md b/README.md[0m
+[38;2;154;140;198mdeleted file mode 100644[0m
+[38;2;154;140;198mindex 9d4e5f6..0000000[0m
+[38;2;247;224;138m--- a/README.md[0m
+[38;2;247;224;138m+++ /dev/null[0m
+[38;2;195;166;255m@@ -1,2 +0,0 @@[0m
+[38;2;242;143;176m-# Title[0m
+[38;2;242;143;176m-text[0m

@@ -1,0 +1,25 @@
+diff --git a/lib/parser.go b/lib/parser.go
+index 3f2a8c1..9d4e5f6 100644
+--- a/lib/parser.go
++++ b/lib/parser.go
+@@ -10,6 +10,7 @@ func parse(in string) error {
+ 	tokens := lex(in)
+-	if len(tokens) == 0 {
++	if len(tokens) < 1 {
+ 		return errEmpty
+ 	}
+--- a trailing dash comment is a removed line
++++ plus plus plus is an added line
+ 
+@@ -40,3 +41,4 @@ func render() {
+ 	out := build()
++	log.Println(out)
+\ No newline at end of file
+diff --git a/README.md b/README.md
+deleted file mode 100644
+index 9d4e5f6..0000000
+--- a/README.md
++++ /dev/null
+@@ -1,2 +0,0 @@
+-# Title
+-text

@@ -1,0 +1,5 @@
+{"time":"2026-10-06T10:00:00Z","level":"info","msg":"server started","port":8080,"tls":false}
+{"time":"2026-10-06T10:00:01Z","level":"error","msg":"db \"timeout\" after 30s","retry":null,"took":1.5e3}
+{"level":"warn","msg":"slow request","ms":420,"path":"/a/b","nested":{"ok":true,"ids":[1,2,3]}}
+{"level":"DEBUG","msg":"x"}
+not json at all, just 42 things

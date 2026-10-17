@@ -1,0 +1,9 @@
+I, [2026-10-06T10:00:00.123 #4242]  INFO -- : listening on addr=0.0.0.0:3000 fd=9
+I, [2026-10-06T10:00:00.456 #4242]  INFO -- : master process ready
+D, [2026-10-06T10:00:00.789 #4300] DEBUG -- : worker=0 ready
+I, [2026-10-06T10:00:01.000 #4242]  INFO -- : reaped #<Process::Status: pid 4300 exit 0> worker=0
+W, [2026-10-06T10:00:02.000 #4242]  WARN -- : timeout (61s > 60s), killing worker=2 pid=4301
+E, [2026-10-06T10:00:03.000 #4242] ERROR -- : app error: undefined method `name' for nil:NilClass (NoMethodError)
+E, [2026-10-06T10:00:03.001 #4242] ERROR -- : /app/models/user.rb:12:in `name'
+E, [2026-10-06T10:00:03.002 #4242] ERROR -- : /app/controllers/users_controller.rb:5:in `show'
+F, [2026-10-06T10:00:04.000 #4242] FATAL -- : master process died, see https://example.com/runbook

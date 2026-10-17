@@ -1,0 +1,5 @@
+Oct  6 10:00:01 web1 CRON[1234]: (root) CMD (/usr/local/bin/backup.sh --full)
+Oct  6 10:00:01 web1 CRON[1235]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Oct  6 10:05:01 web1 CROND[1301]: (deploy) CMD (run-parts /etc/cron.hourly)
+Oct  6 10:06:00 web1 crond[900]: (root) RELOAD (/var/spool/cron/root)
+2026-10-06T10:07:00.123456+02:00 web1 CRON[1500]: (root) ERROR (failed to open /etc/crontab: Permission denied)
