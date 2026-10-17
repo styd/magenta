@@ -1,0 +1,100 @@
+# Release configuration.
+version: 2
+
+project_name: magenta
+
+before:
+  hooks:
+    - go mod tidy
+    # Shell completions for magenta, packaged below.
+    - sh -c 'rm -rf completions && mkdir completions && for sh in bash zsh fish; do go run ./cmd/magenta completion $sh > completions/magenta.$sh; done'
+
+builds:
+  - id: mgnt
+    main: ./cmd/mgnt
+    binary: mgnt
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin, windows, freebsd, openbsd]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w -X github.com/styd/magenta/internal/cli.Version={{.Version}} -X github.com/styd/magenta/internal/cli.Commit={{.ShortCommit}} -X github.com/styd/magenta/internal/cli.Date={{.Date}}
+  - id: magenta
+    main: ./cmd/magenta
+    binary: magenta
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin, windows, freebsd, openbsd]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w -X github.com/styd/magenta/internal/cli.Version={{.Version}} -X github.com/styd/magenta/internal/cli.Commit={{.ShortCommit}} -X github.com/styd/magenta/internal/cli.Date={{.Date}}
+
+# One archive per platform, holding both commands.
+archives:
+  - id: default
+    ids: [mgnt, magenta]
+    name_template: "magenta_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+      - completions/*
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "Merge pull request"
+
+# Linux packages. fzf is recommended, not required: search is optional.
+nfpms:
+  - id: packages
+    package_name: magenta
+    ids: [mgnt, magenta]
+    homepage: https://github.com/styd/magenta
+    maintainer: Adrian Setyadi <a.styd@yahoo.com>
+    description: Log syntax highlighter (mgnt) and its rule and colorscheme manager (magenta).
+    license: MIT
+    formats: [deb, rpm, apk]
+    bindir: /usr/bin
+    recommends: [fzf]
+    contents:
+      - src: completions/magenta.bash
+        dst: /usr/share/bash-completion/completions/magenta
+      - src: completions/magenta.zsh
+        dst: /usr/share/zsh/vendor-completions/_magenta
+      - src: completions/magenta.fish
+        dst: /usr/share/fish/vendor_completions.d/magenta.fish
+
+# Homebrew formula (not a cask, so Linux Homebrew works too).
+brews:
+  - name: magenta
+    ids: [default]
+    repository:
+      owner: styd
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/styd/magenta
+    description: Log syntax highlighter (mgnt) with fzf search, and its rule and colorscheme manager (magenta)
+    license: MIT
+    install: |
+      bin.install "mgnt"
+      bin.install "magenta"
+      bash_completion.install "completions/magenta.bash" => "magenta"
+      zsh_completion.install "completions/magenta.zsh" => "_magenta"
+      fish_completion.install "completions/magenta.fish"
+    caveats: |
+      mgnt's `/` search needs fzf:  brew install fzf
+    test: |
+      assert_match "mgnt", shell_output("#{bin}/mgnt --version")
+      assert_match "magenta", shell_output("#{bin}/magenta --version")
+      assert_equal "hi\n", pipe_output("#{bin}/mgnt --no-interactive", "hi\n", 0).gsub(/\e\[[0-9;]*m/, "")

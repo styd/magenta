@@ -1,0 +1,70 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go vet ./...
+      - run: go test ./...
+      - name: Both commands install and run
+        shell: bash
+        run: |
+          go install ./cmd/...
+          "$(go env GOPATH)/bin/mgnt" --version
+          "$(go env GOPATH)/bin/magenta" --version
+      - name: Install tmux and fzf for the end to end check
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            sudo apt-get update && sudo apt-get install -y tmux fzf
+          else
+            brew install tmux fzf
+          fi
+      - name: End to end check with the real fzf
+        if: runner.os != 'Windows'
+        run: sh test/smoke.sh
+
+  # Alpine is Linux with musl instead of glibc, and ships its own fzf.
+  alpine:
+    runs-on: ubuntu-latest
+    container: golang:alpine
+    steps:
+      - uses: actions/checkout@v4
+      - run: apk add --no-cache fzf tmux
+      - run: go vet ./...
+      - run: go test ./...
+      - run: sh test/smoke.sh
+
+  # BSD systems cannot run in a container, so they run in a virtual machine.
+  bsd:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [freebsd, openbsd, netbsd]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: ${{ matrix.os }}
+          version: ${{ matrix.os == 'freebsd' && '14.2' || matrix.os == 'openbsd' && '7.6' || '10.0' }}
+          run: |
+            case "$(uname -s)" in
+              FreeBSD) sudo pkg install -y go fzf tmux ;;
+              OpenBSD) sudo pkg_add go fzf tmux ;;
+              NetBSD) sudo pkgin -y install go tmux ;;
+            esac
+            go vet ./...
+            go test ./...
