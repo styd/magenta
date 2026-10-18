@@ -28,13 +28,18 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
-            sudo apt-get update && sudo apt-get install -y tmux fzf
+            sudo apt-get update && sudo apt-get install -y tmux
+            # The packaged fzf (0.44) is too old for the preview pane, which needs 0.49.
+            go install github.com/junegunn/fzf@latest
+            echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
           else
             brew install tmux fzf
           fi
       - name: End to end check with the real fzf
         if: runner.os != 'Windows'
-        run: sh test/smoke.sh
+        run: |
+          fzf --version
+          sh test/smoke.sh
 
   # Alpine is Linux with musl instead of glibc, and ships its own fzf.
   alpine:
@@ -81,6 +86,9 @@ jobs:
         run: |
           # The packages put go in a directory that a plain ssh shell does not search.
           export PATH="$PATH:/usr/pkg/bin:/usr/local/bin"
+          for d in /usr/pkg/go*/bin; do PATH="$PATH:$d"; done
+          # The system Go may be older than go.mod asks for, and some ports turn the download off.
+          export GOTOOLCHAIN=auto
           command -v go
           go version
           go vet ./...
