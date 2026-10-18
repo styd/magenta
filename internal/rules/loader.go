@@ -2,6 +2,7 @@ package rules
 
 import (
 	"path"
+	"path/filepath"
 	"regexp"
 
 	"github.com/styd/magenta/internal/config"
@@ -25,7 +26,7 @@ type Detector struct {
 
 // MatchFilename returns the first glob that matches the base name of file.
 func (d *Detector) MatchFilename(file string) (string, bool) {
-	base := path.Base(file)
+	base := filepath.Base(file) // also splits at a backslash on Windows
 	for _, g := range d.Filenames {
 		if ok, _ := path.Match(g, base); ok {
 			return g, true
