@@ -137,6 +137,12 @@ func (p *previewServer) serve() {
 				return
 			}
 			c.Write(p.handle(strings.Fields(line)))
+			// Say that the answer is complete and wait for the helper to hang up, so
+			// that closing the socket cannot drop the answer (it can on Windows).
+			if uc, ok := c.(*net.UnixConn); ok {
+				uc.CloseWrite()
+				io.Copy(io.Discard, io.LimitReader(c, 256))
+			}
 		}()
 	}
 }
