@@ -62,7 +62,7 @@ nfpms:
     ids: [mgnt, magenta]
     homepage: https://github.com/styd/magenta
     maintainer: Adrian Setyadi <a.styd@yahoo.com>
-    description: Log syntax highlighter (mgnt) and its rule and colorscheme manager (magenta).
+    description: Viewer for logs and command output (mgnt) and its rule and colorscheme manager (magenta).
     license: MIT
     formats: [deb, rpm, apk]
     bindir: /usr/bin
@@ -84,7 +84,7 @@ brews:
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: https://github.com/styd/magenta
-    description: Log syntax highlighter (mgnt) with fzf search, and its rule and colorscheme manager (magenta)
+    description: Viewer for logs and command output (mgnt) with fzf search, and its rule and colorscheme manager (magenta)
     license: MIT
     install: |
       bin.install "mgnt"
