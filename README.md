@@ -487,7 +487,3 @@ Add `colorschemes/<name>.toml`, and list it in the colorscheme tests (`internal/
 ### Adding a setting
 
 Add the field to `config.Config` with its default and validation, to `SettingKeys`, `Get` and `SetFile` in `internal/config/config.go`, and to the table above. `magenta config set` rewrites only the line it changes and keeps comments.
-
-### Releases
-
-Maintainers make releases from tags. Nothing here is needed to contribute.
