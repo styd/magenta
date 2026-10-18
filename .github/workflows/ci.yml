@@ -48,23 +48,40 @@ jobs:
       - run: sh test/smoke.sh
 
   # BSD systems cannot run in a container, so they run in a virtual machine.
+  # The versions are ones the action has images for (see its README).
   bsd:
+    name: bsd (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
-        os: [freebsd, openbsd, netbsd]
+        include:
+          - os: freebsd
+            version: '15.1'
+            install: sudo pkg install -y go fzf tmux
+          - os: openbsd
+            version: '7.9'
+            install: sudo pkg_add go fzf tmux
+          - os: netbsd
+            version: '11.0'
+            install: sudo pkgin -y install go tmux
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: cross-platform-actions/action@v0.25.0
+      - name: Start the VM
+        uses: cross-platform-actions/action@v1.6.0
         with:
           operating_system: ${{ matrix.os }}
-          version: ${{ matrix.os == 'freebsd' && '14.2' || matrix.os == 'openbsd' && '7.6' || '10.0' }}
-          run: |
-            case "$(uname -s)" in
-              FreeBSD) sudo pkg install -y go fzf tmux ;;
-              OpenBSD) sudo pkg_add go fzf tmux ;;
-              NetBSD) sudo pkgin -y install go tmux ;;
-            esac
-            go vet ./...
-            go test ./...
+          version: ${{ matrix.version }}
+      - name: Install Go and the tools
+        run: ${{ matrix.install }}
+      - name: Vet and test
+        run: |
+          # The packages put go in a directory that a plain ssh shell does not search.
+          export PATH="$PATH:/usr/pkg/bin:/usr/local/bin"
+          command -v go
+          go version
+          go vet ./...
+          go test ./...
