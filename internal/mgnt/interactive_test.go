@@ -41,7 +41,9 @@ echo $$ > "$D/pid"
 printf '%s\n' "$@" > "$D/args"
 env > "$D/env"
 echo started >> "$D/started"
-cat <&0 > "$D/stdin" 2>/dev/null &
+# dash gives a background job /dev/null for stdin before "<&0" is read, so keep the pipe on fd 3.
+exec 3<&0
+cat <&3 > "$D/stdin" 2>/dev/null &
 CAT=$!
 while [ ! -f "$D/release" ]; do sleep 0.02; done
 # --print-query: when fzf leaves, the query comes first, then the selected lines
