@@ -169,7 +169,11 @@ func TestServerAndHelper(t *testing.T) {
 		t.Errorf("dir mode %v", st.Mode().Perm())
 	}
 	cmd := srv.Command()
-	if !strings.HasPrefix(cmd, `'/opt/my tools/mgnt'\''s' __preview --sock '`) || !strings.HasSuffix(cmd, " {1}") {
+	wantStart := `'/opt/my tools/mgnt'\''s' __preview --sock '`
+	if runtime.GOOS == "windows" { // cmd.exe has no single quotes
+		wantStart = `"/opt/my tools/mgnt's" __preview --sock "`
+	}
+	if !strings.HasPrefix(cmd, wantStart) || !strings.HasSuffix(cmd, " {1}") {
 		t.Errorf("command %q", cmd)
 	}
 
