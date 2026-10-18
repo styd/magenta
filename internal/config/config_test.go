@@ -19,14 +19,16 @@ func write(t *testing.T, path, content string) {
 }
 
 func TestDir(t *testing.T) {
-	t.Setenv("XDG_CONFIG_HOME", "/x/cfg")
-	if got := Dir(); got != "/x/cfg/magenta" {
-		t.Errorf("got %q", got)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join("x", "cfg"))
+	if got, want := Dir(), filepath.Join("x", "cfg", "magenta"); got != want {
+		t.Errorf("got %q, want %q", got, want)
 	}
 	t.Setenv("XDG_CONFIG_HOME", "")
-	t.Setenv("HOME", "/home/u")
-	if got := Dir(); got != "/home/u/.config/magenta" {
-		t.Errorf("got %q", got)
+	home := filepath.Join("home", "u")
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // Windows reads this one
+	if got, want := Dir(), filepath.Join(home, ".config", "magenta"); got != want {
+		t.Errorf("got %q, want %q", got, want)
 	}
 }
 

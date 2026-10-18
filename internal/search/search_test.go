@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"slices"
 	"strings"
 	"sync"
@@ -435,8 +436,17 @@ printf '%s' "$FAKE_STDOUT"
 exit ${FAKE_EXIT:-0}
 `
 
+// needShell skips a test on Windows, where the fake fzf (a shell script) cannot run.
+func needShell(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		t.Skip("the fake fzf is a shell script")
+	}
+}
+
 func fakeFzf(t *testing.T) (path, args string) {
 	t.Helper()
+	needShell(t)
 	dir := t.TempDir()
 	path = filepath.Join(dir, "fzf")
 	if err := os.WriteFile(path, []byte(fakeFzfPrints), 0o755); err != nil {

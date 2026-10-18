@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"testing"
 	"time"
 
@@ -169,7 +168,7 @@ type epipeWriter struct{ n int }
 
 func (w *epipeWriter) Write(p []byte) (int, error) {
 	w.n++
-	return 0, &os.PathError{Op: "write", Path: "|1", Err: syscall.EPIPE}
+	return 0, &os.PathError{Op: "write", Path: "|1", Err: errClosedPipe}
 }
 
 func TestClosedPipeExitsQuietly(t *testing.T) {

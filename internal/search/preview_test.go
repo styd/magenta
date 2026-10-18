@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -118,14 +119,22 @@ func TestRenderWindowEvictedAndStyling(t *testing.T) {
 	}
 }
 
+// shortTmp makes a short temporary directory and points the temporary
+// directory variables at it, since a socket path has a small length limit.
 func shortTmp(t *testing.T) string {
 	t.Helper()
-	d, err := os.MkdirTemp("/tmp", "pt")
+	parent := "/tmp"
+	if runtime.GOOS == "windows" {
+		parent = "" // there is no /tmp, and the default is short enough
+	}
+	d, err := os.MkdirTemp(parent, "pt")
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { os.RemoveAll(d) })
 	t.Setenv("TMPDIR", d)
+	t.Setenv("TMP", d) // Windows reads these two
+	t.Setenv("TEMP", d)
 	return d
 }
 
@@ -252,6 +261,9 @@ func TestStartPreviewFailsCleanly(t *testing.T) {
 
 func TestVeryLongTmpdirFallsBackToTmp(t *testing.T) {
 	base := t.TempDir()
+	if runtime.GOOS == "windows" {
+		t.Skip("there is no /tmp to fall back to")
+	}
 	deep := base
 	for len(deep) < 120 {
 		deep = filepath.Join(deep, "a-rather-long-directory-name")
@@ -277,6 +289,7 @@ exit ${FAKE_EXIT:-0}
 `
 
 func TestRunRemovesTheSocketDirectoryOnEveryPath(t *testing.T) {
+	needShell(t)
 	tmp := shortTmp(t)
 	bin := t.TempDir()
 	fzf := filepath.Join(bin, "fzf")
@@ -331,6 +344,7 @@ func TestRunRemovesTheSocketDirectoryOnEveryPath(t *testing.T) {
 }
 
 func TestRunWithoutAPreviewExecutableStillSearches(t *testing.T) {
+	needShell(t)
 	shortTmp(t)
 	bin := t.TempDir()
 	os.WriteFile(filepath.Join(bin, "fzf"), []byte(fakeFzfQuick), 0o755)
