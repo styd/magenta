@@ -162,8 +162,11 @@ func TestServerAndHelper(t *testing.T) {
 	}
 	// The socket lives in a private directory.
 	st, err := os.Stat(srv.Dir())
-	if err != nil || st.Mode().Perm() != 0o700 || filepath.Dir(srv.Dir()) != tmp {
+	if err != nil || filepath.Dir(srv.Dir()) != tmp {
 		t.Fatalf("dir %v %v", st, err)
+	}
+	if runtime.GOOS != "windows" && st.Mode().Perm() != 0o700 { // Windows has no permission bits
+		t.Errorf("dir mode %v", st.Mode().Perm())
 	}
 	cmd := srv.Command()
 	if !strings.HasPrefix(cmd, `'/opt/my tools/mgnt'\''s' __preview --sock '`) || !strings.HasSuffix(cmd, " {1}") {
@@ -253,7 +256,10 @@ func TestStartPreviewFailsCleanly(t *testing.T) {
 	if _, err := startPreview(ringOf(1, 1), &PreviewOptions{}); err == nil {
 		t.Error("no executable must be an error")
 	}
-	t.Setenv("TMPDIR", filepath.Join(tmp, "does-not-exist"))
+	gone := filepath.Join(tmp, "does-not-exist")
+	t.Setenv("TMPDIR", gone)
+	t.Setenv("TMP", gone) // Windows reads these two
+	t.Setenv("TEMP", gone)
 	if _, err := startPreview(ringOf(1, 1), &PreviewOptions{Exe: "mgnt"}); err == nil {
 		t.Error("an unusable temp dir must be an error")
 	}
