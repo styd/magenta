@@ -1,0 +1,13 @@
+Working copy changes:
+M README.md
+M internal/rules/rules_test.go
+A rules/jj-log.toml
+A testdata/jj-log/in.log
+D old.txt
+R {a.txt => b.txt}
+Working copy  (@) : nmounqsk 861270c5 (no description set)
+Parent commit (@-): zwrupzsq 77e62037 main v0.1.0 | Remove 'Releases' section on readme
+
+There are unresolved conflicts at these paths:
+src/lib.rs    2-sided conflict
+Warning: The working copy is stale

@@ -1,0 +1,18 @@
+[38;2;247;224;138mModified[0m [38;2;154;140;198mregular file [0m[38;2;251;243;200mREADME.md[0m:
+    ...[38;2;180;218;255m                               # and is processed again in "default"[0m
+[38;2;228;220;247m 277  277:[0m - `magenta rule check` rejects invalid regexes (with file and line), unknown contexts, context cycles, a `captures` list that does not match the regex's groups, and any `sample` line that no rule matches. It warns about scopes that the built-in colorscheme does not style.
+[38;2;228;220;247m 278  278:[0m - **Detection**: `mgnt` looks at the first 10 lines (or whatever arrived within 50 ms), scores each rule by how many of those lines its `detect` regexes match, and picks the best one that reaches a threshold, otherwise `generic`. A matching `filenames` glob adds a strong bonus. It re-checks only after 100 lines in a row that the chosen rule does not recognize. `magenta detect <file>` shows the scores.
+[38;2;228;220;247m 279  279:[0m 
+[38;2;242;143;176m 280     : Built-in rules: `generic`, `git-log`, `git-diff`, `unicorn`, `cron`, `rails`, `nginx-access`, `jsonl`.[0m
+[38;2;180;218;255m      280: Built-in rules: `generic`, `git-log`, `git-diff`, `git-status`, `go-test`, `pytest`, `compiler`, `docker-build`, `terraform`, `curl-verbose`, `ping`, `syslog`, `unicorn`, `cron`, `rails`, `nginx-access`, `jsonl`.[0m
+[38;2;228;220;247m 281  281:[0m 
+[38;2;228;220;247m 282  282:[0m ### Colorschemes and themes
+[38;2;228;220;247m 283  283:[0m 
+    ...
+[38;2;247;224;138mModified[0m [38;2;154;140;198mregular file [0m[38;2;251;243;200minternal/magentacli/magentacli_test.go[0m:
+[38;2;180;218;255mAdded[0m [38;2;154;140;198mregular file[0m [38;2;251;243;200mrules/jj-log.toml[0m:
+[38;2;180;218;255m        1: # jj log, with or without the graph.[0m
+[38;2;180;218;255m        2: name = "jj-log"[0m
+[38;2;242;143;176mRemoved[0m [38;2;154;140;198mregular file[0m [38;2;251;243;200mold.txt[0m:
+[38;2;242;143;176m    1     : gone[0m
+[38;2;247;224;138mRenamed[0m [38;2;251;243;200ma.txt => b.txt[0m:

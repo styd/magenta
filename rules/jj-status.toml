@@ -1,0 +1,80 @@
+# jj status (jj st).
+name = "jj-status"
+detect = [
+  '^Working copy changes:',
+  '^The working copy has no changes\.',
+  '^Working copy\s+\(@\)\s*:',
+  '^Parent commit\s+\(@-?\)\s*:',
+  '^[AMD] [^\s:]*[./][^\s:]*$',
+  '^[RC] \{.+ => .+\}$',
+]
+filenames = ["jj-st*.txt", "jj-status*.txt"]
+sample = [
+  'Working copy changes:',
+  'M README.md',
+  'A rules/jj-log.toml',
+  'D old.txt',
+  'R {a.txt => b.txt}',
+  'C {a.txt => c.txt}',
+  'The working copy has no changes.',
+  'Working copy  (@) : nmounqsk 861270c5 (no description set)',
+  'Parent commit (@-): zwrupzsq 77e62037 main v0.1.0 | Remove the Releases section',
+  'There are unresolved conflicts at these paths:',
+  'src/lib.rs    2-sided conflict',
+  'Warning: The working copy is stale',
+]
+
+[[context.default.rule]]
+regex = '^(Working copy changes:)'
+captures = ["key"]
+
+[[context.default.enter]]
+regex = '^Working copy changes:'
+to = "changes"
+
+[[context.default.rule]]
+regex = '^The working copy has no changes\.'
+scope = "level.info"
+
+[[context.default.rule]]
+regex = '^(Working copy|Parent commit)\s+(\(@-?\))\s*:\s+([k-z]{8,})\s+([0-9a-f]{8,40})'
+captures = ["key", "constant", "key", "git.hash"]
+
+[[context.default.rule]]
+regex = '^Parent commit.*?[0-9a-f]{8,40}\s+([\w./@*-]+(?: [\w./@*-]+)*) \|'
+captures = ["git.ref"]
+
+[[context.default.rule]]
+regex = '\((?:empty|no description set)\)'
+scope = "level.debug"
+
+[[context.default.rule]]
+regex = '^There are unresolved conflicts at these paths:'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '^(\S.*?)\s+(\d+-sided conflict.*)$'
+captures = ["path", "level.error"]
+
+[[context.default.rule]]
+regex = '^(Warning:|Hint:|Error:)(.*)$'
+captures = ["level.warn", "level.warn"]
+
+[[context.changes.rule]]
+regex = '^(A) (.*)$'
+captures = ["diff.added", "path"]
+
+[[context.changes.rule]]
+regex = '^(M) (.*)$'
+captures = ["level.warn", "path"]
+
+[[context.changes.rule]]
+regex = '^(D) (.*)$'
+captures = ["diff.removed", "path"]
+
+[[context.changes.rule]]
+regex = '^([RC]) (.*)$'
+captures = ["git.ref", "path"]
+
+[[context.changes.exit]]
+unless = '^[AMDRC] '

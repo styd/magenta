@@ -1,0 +1,47 @@
+# jj diff in its default color-words format, and --summary.
+name = "jj-diff"
+detect = [
+  '^(?:Modified|Added|Removed|Renamed|Copied) (?:regular file|executable file|symlink|file|conflict|submodule)\b.*:$',
+  '^ {0,5}\d+ {1,6}\d+: ',
+]
+filenames = ["jj-diff*.txt", "jj-diff*.patch"]
+sample = [
+  'Modified regular file README.md:',
+  '    ...                               # and is processed again in "default"',
+  ' 277  277: - `magenta rule check` rejects invalid regexes',
+  ' 280     : Built-in rules: `generic`, `git-log`',
+  '      280: Built-in rules: `generic`, `git-log`, `git-status`',
+  'Added regular file rules/jj-log.toml:',
+  '        1: # jj log, with or without the graph.',
+  'Removed regular file old.txt:',
+  '    1     : gone',
+  'Renamed a.txt => b.txt:',
+]
+
+[[context.default.rule]]
+regex = '^(Added) (regular file|executable file|symlink|file|submodule) (.*):$'
+captures = ["diff.added", "diff.meta", "path"]
+
+[[context.default.rule]]
+regex = '^(Removed) (regular file|executable file|symlink|file|submodule) (.*):$'
+captures = ["diff.removed", "diff.meta", "path"]
+
+[[context.default.rule]]
+regex = '^(Modified|Renamed|Copied|Created|Resolved) (regular file |executable file |symlink |file |conflict in |submodule )?(.*):$'
+captures = ["diff.header", "diff.meta", "path"]
+
+[[context.default.rule]]
+regex = '^( *\d+ +:)(.*)$'
+captures = ["diff.removed", "diff.removed"]
+
+[[context.default.rule]]
+regex = '^( +\d+:)(.*)$'
+captures = ["diff.added", "diff.added"]
+
+[[context.default.rule]]
+regex = '^( *\d+ +\d+:)'
+captures = ["diff.context"]
+
+[[context.default.rule]]
+regex = '^ +\.\.\.(.*)$'
+captures = ["diff.hunk.context"]

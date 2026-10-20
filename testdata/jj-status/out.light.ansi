@@ -1,0 +1,13 @@
+[38;2;162;63;196mWorking copy changes:[0m
+[38;2;138;101;0mM[0m [38;2;107;96;0mREADME.md[0m
+[38;2;138;101;0mM[0m [38;2;107;96;0minternal/rules/rules_test.go[0m
+[38;2;23;79;156mA[0m [38;2;107;96;0mrules/jj-log.toml[0m
+[38;2;23;79;156mA[0m [38;2;107;96;0mtestdata/jj-log/in.log[0m
+[38;2;192;48;95mD[0m [38;2;107;96;0mold.txt[0m
+[38;2;107;63;212mR[0m [38;2;107;96;0m{a.txt => b.txt}[0m
+[38;2;162;63;196mWorking copy[0m  [38;2;107;63;212m(@)[0m : [38;2;162;63;196mnmounqsk[0m [38;2;138;101;0m861270c5[0m [38;2;106;90;153m(no description set)[0m
+[38;2;162;63;196mParent commit[0m [38;2;107;63;212m(@-)[0m: [38;2;162;63;196mzwrupzsq[0m [38;2;138;101;0m77e62037[0m [38;2;107;63;212mmain v0.1.0[0m | Remove 'Releases' section on readme
+
+[1;38;2;192;48;95mThere are unresolved conflicts at these paths:[0m
+[38;2;107;96;0msrc/lib.rs[0m    [1;38;2;192;48;95m2-sided conflict[0m
+[38;2;138;101;0mWarning: The working copy is stale[0m

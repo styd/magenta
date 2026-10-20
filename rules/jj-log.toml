@@ -1,0 +1,43 @@
+# jj log, with or without the graph.
+name = "jj-log"
+detect = [
+  '^[│├└╯╮╭╰─┬┴┼~ ]*[@○◆×◌]\s+[k-z]{4,}\s+\S+\s+\d{4}-\d\d-\d\d \d\d:\d\d:\d\d',
+  '^[k-z]{8,}\s+\S+\s+\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\s',
+]
+filenames = ["jj-log*.txt", "jj-log*.log"]
+sample = [
+  '@  nmounqsk a.styd@yahoo.com 2026-10-20 14:26:38 861270c5',
+  '│  (empty) (no description set)',
+  '○  zwrupzsq a.styd@yahoo.com 2026-10-18 21:19:36 main v0.1.0 77e62037',
+  '│  Remove the Releases section on readme',
+  '│ ○  uqxylnko ada@example.com 2026-10-17 09:00:00 feature 1a2b3c4d',
+  '├─╯  Try something',
+  '×  kkmpptxz ada@example.com 2026-10-16 08:00:00 9f8e7d6c conflict',
+  '◆  zzzzzzzz root() 00000000',
+  '~',
+  'nmounqsk a.styd@yahoo.com 2026-10-20 14:26:38 861270c5',
+]
+
+[[context.default.rule]]
+regex = '^([│├└╯╮╭╰─┬┴┼~ ]*)([@○◆×◌]?)\s*([k-z]{8,})\s+(\S+)\s+(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\s+(.*?)\s*\b([0-9a-f]{8,40})\b'
+captures = ["level.debug", "level.info", "key", "git.author", "timestamp", "git.ref", "git.hash"]
+
+[[context.default.rule]]
+regex = '^([│├└╯╮╭╰─┬┴┼~ ]*)([@○◆×◌])\s+(z{8})\s+(root\(\))\s+(0{8})'
+captures = ["level.debug", "level.debug", "level.debug", "level.debug", "level.debug"]
+
+[[context.default.rule]]
+regex = '^ *([│├└╯╮╭╰─┬┴┼~][ │├└╯╮╭╰─┬┴┼~]*)'
+captures = ["level.debug"]
+
+[[context.default.rule]]
+regex = '\((?:empty|no description set)\)'
+scope = "level.debug"
+
+[[context.default.rule]]
+regex = '\b(?:conflict|divergent)\b'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '\bgit_head\(\)'
+scope = "level.debug"

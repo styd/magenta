@@ -1,0 +1,18 @@
+Modified regular file README.md:
+    ...                               # and is processed again in "default"
+ 277  277: - `magenta rule check` rejects invalid regexes (with file and line), unknown contexts, context cycles, a `captures` list that does not match the regex's groups, and any `sample` line that no rule matches. It warns about scopes that the built-in colorscheme does not style.
+ 278  278: - **Detection**: `mgnt` looks at the first 10 lines (or whatever arrived within 50 ms), scores each rule by how many of those lines its `detect` regexes match, and picks the best one that reaches a threshold, otherwise `generic`. A matching `filenames` glob adds a strong bonus. It re-checks only after 100 lines in a row that the chosen rule does not recognize. `magenta detect <file>` shows the scores.
+ 279  279: 
+ 280     : Built-in rules: `generic`, `git-log`, `git-diff`, `unicorn`, `cron`, `rails`, `nginx-access`, `jsonl`.
+      280: Built-in rules: `generic`, `git-log`, `git-diff`, `git-status`, `go-test`, `pytest`, `compiler`, `docker-build`, `terraform`, `curl-verbose`, `ping`, `syslog`, `unicorn`, `cron`, `rails`, `nginx-access`, `jsonl`.
+ 281  281: 
+ 282  282: ### Colorschemes and themes
+ 283  283: 
+    ...
+Modified regular file internal/magentacli/magentacli_test.go:
+Added regular file rules/jj-log.toml:
+        1: # jj log, with or without the graph.
+        2: name = "jj-log"
+Removed regular file old.txt:
+    1     : gone
+Renamed a.txt => b.txt:
