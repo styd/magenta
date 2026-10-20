@@ -35,7 +35,7 @@ func TestBuiltinRulesAreValid(t *testing.T) {
 }
 
 func TestExpectedBuiltins(t *testing.T) {
-	want := "compiler,cron,generic,git-diff,git-log,go-test,jsonl,nginx-access,ping,rails,syslog,unicorn"
+	want := "compiler,cron,curl-verbose,docker-build,generic,git-diff,git-log,git-status,go-test,jsonl,nginx-access,ping,pytest,rails,syslog,terraform,unicorn"
 	if got := strings.Join(config.BuiltinNames(config.Rules), ","); got != want {
 		t.Errorf("got %s, want %s", got, want)
 	}

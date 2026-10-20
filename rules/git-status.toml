@@ -1,0 +1,91 @@
+# git status, long form and the "## branch" line of git status -sb.
+name = "git-status"
+detect = [
+  '^On branch \S+',
+  '^HEAD detached at \S+',
+  '^(?:Changes (?:not staged for commit|to be committed)|Untracked files|Unmerged paths):',
+  '^## \S+',
+]
+filenames = ["git-status*.txt"]
+sample = [
+  'On branch main',
+  "Your branch is ahead of 'origin/main' by 2 commits.",
+  'Changes to be committed:',
+  "\tnew file:   lib/parser.go",
+  "\tmodified:   README.md",
+  "\tdeleted:    old.txt",
+  "\trenamed:    a.txt -> b.txt",
+  'Changes not staged for commit:',
+  'Untracked files:',
+  "\tnotes.md",
+  'no changes added to commit (use "git add" and/or "git commit -a")',
+  '## main...origin/main [ahead 2]',
+]
+
+[[context.default.rule]]
+regex = '^(On branch) (\S+)'
+captures = ["key", "git.ref"]
+
+[[context.default.rule]]
+regex = '^(HEAD detached (?:at|from)) (\S+)'
+captures = ["key", "git.hash"]
+
+[[context.default.rule]]
+regex = "^## (\\S+?)(?:\\.\\.\\.(\\S+))?(?: \\[([^\\]]+)\\])?$"
+captures = ["git.ref", "git.ref", "level.warn"]
+
+[[context.default.rule]]
+regex = "'([^']+)'"
+captures = ["git.ref"]
+
+[[context.default.rule]]
+regex = '\b(\d+) (?:commits?|different commits? each)'
+captures = ["number"]
+
+[[context.default.rule]]
+regex = '^Changes to be committed:'
+scope = "diff.added"
+
+[[context.default.rule]]
+regex = '^(?:Changes not staged for commit|Unmerged paths):'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '^Untracked files:'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '^\t(new file:)\s+(.*)$'
+captures = ["diff.added", "path"]
+
+[[context.default.rule]]
+regex = '^\t(modified:)\s+(.*)$'
+captures = ["level.warn", "path"]
+
+[[context.default.rule]]
+regex = '^\t(deleted:)\s+(.*)$'
+captures = ["diff.removed", "path"]
+
+[[context.default.rule]]
+regex = '^\t(renamed|copied):\s+(.*?) -> (.*)$'
+captures = ["git.ref", "path", "path"]
+
+[[context.default.rule]]
+regex = '^\t(both (?:modified|added|deleted)|added by \w+|deleted by \w+):\s+(.*)$'
+captures = ["level.error", "path"]
+
+[[context.default.rule]]
+regex = '^\t(\S.*)$'
+captures = ["path"]
+
+[[context.default.rule]]
+regex = '^\s+\((use "[^"]+"[^)]*)\)'
+captures = ["level.debug"]
+
+[[context.default.rule]]
+regex = '^(?:no changes added to commit|nothing added to commit).*'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '^nothing to commit.*'
+scope = "level.info"

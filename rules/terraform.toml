@@ -1,0 +1,92 @@
+# terraform plan and apply output (colors from terraform itself are stripped).
+name = "terraform"
+detect = [
+  '^Terraform will perform the following actions:',
+  '^Plan: \d+ to add, \d+ to change, \d+ to destroy',
+  '^\s+# \S+ (?:will be|must be) ',
+  '^\S+: (?:Creating|Modifying|Destroying|Refreshing state|Creation complete|Still creating)',
+  '^(?:Apply|Destroy) complete! Resources:',
+]
+filenames = ["terraform*.txt", "tf-plan*.txt", "tfplan*.txt"]
+sample = [
+  'Terraform will perform the following actions:',
+  '  # aws_instance.web will be created',
+  '  + resource "aws_instance" "web" {',
+  '      + ami           = "ami-0abc"',
+  '  # aws_s3_bucket.logs will be updated in-place',
+  '  ~ resource "aws_s3_bucket" "logs" {',
+  '      ~ acl = "private" -> "public-read"',
+  '  # aws_db_instance.old will be destroyed',
+  '  - resource "aws_db_instance" "old" {',
+  '  # aws_instance.web must be replaced',
+  '-/+ resource "aws_instance" "web" {',
+  'Plan: 1 to add, 1 to change, 1 to destroy.',
+  'aws_instance.web: Creating...',
+  'aws_instance.web: Creation complete after 32s [id=i-0abc]',
+  'Apply complete! Resources: 1 added, 1 changed, 1 destroyed.',
+  'Error: Invalid value for variable',
+]
+
+[[context.default.rule]]
+regex = '^(\s+# )(\S+) (will be created|will be read during apply)'
+captures = ["key", "name", "diff.added"]
+
+[[context.default.rule]]
+regex = '^(\s+# )(\S+) (will be updated in-place)'
+captures = ["key", "name", "level.warn"]
+
+[[context.default.rule]]
+regex = '^(\s+# )(\S+) (will be destroyed|must be replaced)(.*)$'
+captures = ["key", "name", "diff.removed", "diff.removed"]
+
+[[context.default.rule]]
+regex = '^\s*-/\+.*'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '^\s*\+ .*'
+scope = "diff.added"
+
+[[context.default.rule]]
+regex = '^\s*~ .*'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '^\s*- .*'
+scope = "diff.removed"
+
+[[context.default.rule]]
+regex = '^(Plan:) (\d+) to add, (\d+) to change, (\d+) to destroy'
+captures = ["key", "diff.added", "level.warn", "diff.removed"]
+
+[[context.default.rule]]
+regex = '^(Apply complete!|Destroy complete!) Resources: (\d+) added, (\d+) changed, (\d+) destroyed'
+captures = ["level.info", "diff.added", "level.warn", "diff.removed"]
+
+[[context.default.rule]]
+regex = '^(\S+): (Creating|Modifying|Destroying|Refreshing state|Still \w+)\.\.\.'
+captures = ["name", "key"]
+
+[[context.default.rule]]
+regex = '^(\S+): (Creation complete|Modifications complete|Destruction complete)( after \S+)?'
+captures = ["name", "level.info", "duration"]
+
+[[context.default.rule]]
+regex = '^(Error:).*'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '^(Warning:).*'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '\[id=([^\]]+)\]'
+captures = ["uuid"]
+
+[[context.default.rule]]
+regex = '"(?:[^"\\]|\\.)*"'
+scope = "string"
+
+[[context.default.rule]]
+regex = '^Terraform will perform the following actions:'
+scope = "key"

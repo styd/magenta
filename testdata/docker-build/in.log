@@ -1,0 +1,14 @@
+#1 [internal] load build definition from Dockerfile
+#1 DONE 0.0s
+#5 [2/4] RUN apt-get update
+#5 0.321 Get:1 http://deb.debian.org bookworm InRelease [151 kB]
+#5 DONE 3.2s
+#6 [3/4] COPY . /app
+#6 CACHED
+Step 3/7 : RUN make build
+ ---> Running in 1a2b3c4d5e6f
+ ---> 3f2a8c1e0b1d
+Successfully built 3f2a8c1e0b1d
+Successfully tagged myapp:latest
+#7 ERROR: process "/bin/sh -c make" did not complete successfully: exit code: 2
+ERROR: failed to solve: process "/bin/sh -c make" did not complete successfully: exit code: 2

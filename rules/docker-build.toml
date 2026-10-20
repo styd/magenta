@@ -1,0 +1,78 @@
+# docker build, with BuildKit's plain progress and the classic builder.
+name = "docker-build"
+detect = [
+  '^#\d+ \[[^\]]*\] ',
+  '^#\d+ (?:DONE|CACHED|\d+\.\d+ )',
+  '^Step \d+/\d+ : ',
+  '^ERROR: failed to solve',
+]
+filenames = ["docker-build*.log", "docker-build*.txt", "buildkit*.log"]
+sample = [
+  '#1 [internal] load build definition from Dockerfile',
+  '#5 [2/4] RUN apt-get update',
+  '#5 0.321 Get:1 http://deb.debian.org bookworm InRelease [151 kB]',
+  '#5 DONE 3.2s',
+  '#6 CACHED',
+  'Step 3/7 : RUN make build',
+  ' ---> Running in 1a2b3c4d5e6f',
+  'Successfully built 3f2a8c1e0b1d',
+  'Successfully tagged myapp:latest',
+  'ERROR: failed to solve: process "/bin/sh -c make" did not complete successfully: exit code: 2',
+  '#7 ERROR: process "/bin/sh -c make" did not complete successfully: exit code: 2',
+]
+
+[[context.default.rule]]
+regex = '^(#\d+) (\[[^\]]*\]) (.*)$'
+captures = ["number", "key", "command"]
+
+[[context.default.rule]]
+regex = '^(#\d+) (ERROR:.*)$'
+captures = ["number", "level.error"]
+
+[[context.default.rule]]
+regex = '^(#\d+) (DONE) ([\d.]+s)'
+captures = ["number", "level.info", "duration"]
+
+[[context.default.rule]]
+regex = '^(#\d+) (CACHED)'
+captures = ["number", "level.debug"]
+
+[[context.default.rule]]
+regex = '^(#\d+) ([\d.]+) '
+captures = ["number", "duration"]
+
+[[context.default.rule]]
+regex = '^(Step \d+/\d+) : (.*)$'
+captures = ["key", "command"]
+
+[[context.default.rule]]
+regex = '^( ---> )(Running in|Using cache)?\s*([0-9a-f]{12})?'
+captures = ["key", "level.debug", "git.hash"]
+
+[[context.default.rule]]
+regex = '^(Successfully built) ([0-9a-f]+)'
+captures = ["level.info", "git.hash"]
+
+[[context.default.rule]]
+regex = '^(Successfully tagged) (\S+)'
+captures = ["level.info", "name"]
+
+[[context.default.rule]]
+regex = '^ERROR:.*'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '(?i)\b(?:warning|WARN)\b'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '(?i)\b(?:error|failed|denied|not found)\b'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '\b[a-z][a-z0-9+.-]*://[^\s"<>)\]]+'
+scope = "url"
+
+[[context.default.rule]]
+regex = 'exit code: (\d+)'
+captures = ["number"]

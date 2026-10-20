@@ -1,0 +1,25 @@
+[38;2;162;63;196mTerraform will perform the following actions:[0m
+
+[38;2;162;63;196m  # [0m[38;2;23;79;156maws_instance.web[0m [38;2;23;79;156mwill be created[0m
+[38;2;23;79;156m  + resource "aws_instance" "web" {[0m
+[38;2;23;79;156m      + ami           = "ami-0abc"[0m
+    }
+
+[38;2;162;63;196m  # [0m[38;2;23;79;156maws_s3_bucket.logs[0m [38;2;138;101;0mwill be updated in-place[0m
+[38;2;138;101;0m  ~ resource "aws_s3_bucket" "logs" {[0m
+[38;2;138;101;0m      ~ acl = "private" -> "public-read"[0m
+    }
+
+[38;2;162;63;196m  # [0m[38;2;23;79;156maws_db_instance.old[0m [38;2;192;48;95mwill be destroyed[0m
+[38;2;192;48;95m  - resource "aws_db_instance" "old" {[0m
+    }
+
+[38;2;162;63;196m  # [0m[38;2;23;79;156maws_instance.api[0m [38;2;192;48;95mmust be replaced[0m
+[38;2;138;101;0m-/+ resource "aws_instance" "api" {[0m
+    }
+
+[38;2;162;63;196mPlan:[0m [38;2;23;79;156m2[0m to add, [38;2;138;101;0m1[0m to change, [38;2;192;48;95m2[0m to destroy.
+[38;2;23;79;156maws_instance.web[0m: [38;2;162;63;196mCreating[0m...
+[38;2;23;79;156maws_instance.web[0m: [38;2;23;79;156mCreation complete[0m[38;2;163;95;0m after 32s[0m [id=[38;2;163;95;0mi-0abc[0m]
+[38;2;23;79;156mApply complete![0m Resources: [38;2;23;79;156m2[0m added, [38;2;138;101;0m1[0m changed, [38;2;192;48;95m2[0m destroyed.
+[1;38;2;192;48;95mError: Invalid value for variable[0m

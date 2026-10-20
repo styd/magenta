@@ -1,0 +1,19 @@
+On branch main
+Your branch is ahead of 'origin/main' by 2 commits.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   lib/parser.go
+	modified:   README.md
+	deleted:    old.txt
+	renamed:    a.txt -> b.txt
+
+Changes not staged for commit:
+	modified:   go.mod
+
+Untracked files:
+	notes.md
+	scratch/
+
+no changes added to commit (use "git add" and/or "git commit -a")

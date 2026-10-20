@@ -1,0 +1,14 @@
+[38;2;163;95;0m#1[0m [38;2;162;63;196m[internal][0m [38;2;138;101;0mload build definition from Dockerfile[0m
+[38;2;163;95;0m#1[0m [38;2;23;79;156mDONE[0m [38;2;163;95;0m0.0s[0m
+[38;2;163;95;0m#5[0m [38;2;162;63;196m[2/4][0m [38;2;138;101;0mRUN apt-get update[0m
+[38;2;163;95;0m#5[0m [38;2;163;95;0m0.321[0m Get:1 [38;2;107;96;0mhttp://deb.debian.org[0m bookworm InRelease [151 kB]
+[38;2;163;95;0m#5[0m [38;2;23;79;156mDONE[0m [38;2;163;95;0m3.2s[0m
+[38;2;163;95;0m#6[0m [38;2;162;63;196m[3/4][0m [38;2;138;101;0mCOPY . /app[0m
+[38;2;163;95;0m#6[0m [38;2;106;90;153mCACHED[0m
+[38;2;162;63;196mStep 3/7[0m : [38;2;138;101;0mRUN make build[0m
+[38;2;162;63;196m ---> [0m[38;2;106;90;153mRunning in[0m [38;2;138;101;0m1a2b3c4d5e6f[0m
+[38;2;162;63;196m ---> [0m[38;2;138;101;0m3f2a8c1e0b1d[0m
+[38;2;23;79;156mSuccessfully built[0m [38;2;138;101;0m3f2a8c1e0b1d[0m
+[38;2;23;79;156mSuccessfully tagged[0m [38;2;23;79;156mmyapp:latest[0m
+[38;2;163;95;0m#7[0m [1;38;2;192;48;95mERROR: process "/bin/sh -c make" did not complete successfully: exit code: 2[0m
+[1;38;2;192;48;95mERROR: failed to solve: process "/bin/sh -c make" did not complete successfully: exit code: 2[0m

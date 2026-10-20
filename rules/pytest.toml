@@ -1,0 +1,87 @@
+# pytest output, verbose and dotted.
+name = "pytest"
+detect = [
+  '^=+ test session starts =+$',
+  '^\S+\.py::\S+ (?:PASSED|FAILED|SKIPPED|ERROR|XFAIL|XPASS)',
+  '^(?:FAILED|ERROR) \S+\.py::\S+',
+  '^=+ .*(?:passed|failed|error)s?.* in [\d.]+s',
+]
+filenames = ["pytest*.txt", "pytest*.log"]
+sample = [
+  '============================= test session starts ==============================',
+  'platform darwin -- Python 3.12.4, pytest-8.2.0, pluggy-1.5.0',
+  'collected 4 items',
+  'tests/test_a.py::test_ok PASSED                                          [ 25%]',
+  'tests/test_a.py::test_bad FAILED                                         [ 50%]',
+  'tests/test_a.py::test_skip SKIPPED (not on windows)                     [ 75%]',
+  'tests/test_b.py .F.s                                                    [100%]',
+  '_________________________________ test_bad _________________________________',
+  'E       assert 1 == 2',
+  'tests/test_a.py:12: AssertionError',
+  'FAILED tests/test_a.py::test_bad - assert 1 == 2',
+  '=================== 1 failed, 2 passed, 1 skipped in 0.12s ====================',
+]
+
+[[context.default.rule]]
+regex = '^(=+ test session starts =+)$'
+captures = ["key"]
+
+[[context.default.rule]]
+regex = '^(platform|rootdir|plugins|configfile|cachedir) ?:?\s*(.*)$'
+captures = ["key", "value"]
+
+[[context.default.rule]]
+regex = '^(collected) (\d+) (items?)'
+captures = ["key", "number", "key"]
+
+[[context.default.rule]]
+regex = '^(\S+\.py)(::\S+)? (PASSED|XPASS)'
+captures = ["path", "name", "level.info"]
+
+[[context.default.rule]]
+regex = '^(\S+\.py)(::\S+)? (FAILED|ERROR)'
+captures = ["path", "name", "level.error"]
+
+[[context.default.rule]]
+regex = '^(\S+\.py)(::\S+)? (SKIPPED|XFAIL)'
+captures = ["path", "name", "level.warn"]
+
+[[context.default.rule]]
+regex = '^(\S+\.py) ([.FEsxX]+)'
+captures = ["path", "constant"]
+
+[[context.default.rule]]
+regex = '^(FAILED|ERROR) (\S+\.py)(::\S+)?'
+captures = ["level.error", "path", "name"]
+
+[[context.default.rule]]
+regex = '^_+ (.+?) _+$'
+captures = ["level.error"]
+
+[[context.default.rule]]
+regex = '^(E)(\s+.*)$'
+captures = ["level.error", "level.error"]
+
+[[context.default.rule]]
+regex = '^(\S+\.py):(\d+): '
+captures = ["path", "number"]
+
+[[context.default.rule]]
+regex = '\[\s*\d+%\]'
+scope = "level.debug"
+
+[[context.default.rule]]
+regex = '\b(\d+ (?:failed|errors?))\b'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '\b(\d+ (?:passed|xpassed))\b'
+scope = "level.info"
+
+[[context.default.rule]]
+regex = '\b(\d+ (?:skipped|xfailed|warnings?|deselected))\b'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '\bin ([\d.]+s)\b'
+captures = ["duration"]

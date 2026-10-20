@@ -1,0 +1,70 @@
+# curl -v and curl --trace-ascii style output.
+name = "curl-verbose"
+detect = [
+  '^\* (?:Trying|Connected to|TLSv|Host |ALPN|Connection #|using HTTP|Established connection|Added)',
+  '^> [A-Z]+ \S+ HTTP/[\d.]+',
+  '^< HTTP/[\d.]+ \d{3}',
+]
+filenames = ["curl*.txt", "curl*.log"]
+sample = [
+  '* Host example.com:443 was resolved.',
+  '*   Trying 93.184.216.34:443...',
+  '* Connected to example.com (93.184.216.34) port 443',
+  '* TLSv1.3 (OUT), TLS handshake, Client hello (1):',
+  '> GET /api/v1/items HTTP/2',
+  '> Host: example.com',
+  '> User-Agent: curl/8.4.0',
+  '< HTTP/2 200 ',
+  '< content-type: application/json',
+  '< HTTP/2 503 ',
+  '{ [5 bytes data]',
+  '* Connection #0 to host example.com left intact',
+]
+
+[[context.default.rule]]
+regex = '^(>) ([A-Z]+) (\S+) (HTTP/[\d.]+)'
+captures = ["key", "http.method", "path", "constant"]
+
+[[context.default.rule]]
+regex = '^(<) (HTTP/[\d.]+) (1\d\d|2\d\d)\b'
+captures = ["key", "constant", "http.status.2xx"]
+
+[[context.default.rule]]
+regex = '^(<) (HTTP/[\d.]+) (3\d\d)\b'
+captures = ["key", "constant", "http.status.3xx"]
+
+[[context.default.rule]]
+regex = '^(<) (HTTP/[\d.]+) (4\d\d)\b'
+captures = ["key", "constant", "http.status.4xx"]
+
+[[context.default.rule]]
+regex = '^(<) (HTTP/[\d.]+) (5\d\d)\b'
+captures = ["key", "constant", "http.status.5xx"]
+
+[[context.default.rule]]
+regex = '^([<>]) ([\w-]+):'
+captures = ["key", "name"]
+
+[[context.default.rule]]
+regex = '^(\*)\s+(Trying) ([^:\s]+(?::\d+)?)'
+captures = ["key", "name", "ip"]
+
+[[context.default.rule]]
+regex = '^(\*) (Connected to) (\S+) \(([^)]+)\) port (\d+)'
+captures = ["key", "name", "name", "ip", "number"]
+
+[[context.default.rule]]
+regex = '^\* (?:SSL certificate problem|Could not resolve|Failed|Connection refused|connect to .* failed|Operation timed out|.*[Ee]rror).*'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '^(\*)'
+captures = ["key"]
+
+[[context.default.rule]]
+regex = '^[{}] \[\d+ bytes data\]'
+scope = "level.debug"
+
+[[context.default.rule]]
+regex = '\b[a-z][a-z0-9+.-]*://[^\s"<>)\]]+'
+scope = "url"

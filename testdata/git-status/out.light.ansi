@@ -1,0 +1,19 @@
+[38;2;162;63;196mOn branch[0m [38;2;107;63;212mmain[0m
+Your branch is ahead of '[38;2;107;63;212morigin/main[0m' by [38;2;163;95;0m2[0m commits.
+  ([38;2;106;90;153muse "git push" to publish your local commits[0m)
+
+[38;2;23;79;156mChanges to be committed:[0m
+  ([38;2;106;90;153muse "git restore --staged <file>..." to unstage[0m)
+	[38;2;23;79;156mnew file:[0m[38;2;107;96;0m   lib/parser.go[0m
+	[38;2;138;101;0mmodified:[0m[38;2;107;96;0m   README.md[0m
+	[38;2;192;48;95mdeleted:[0m[38;2;107;96;0m    old.txt[0m
+	[38;2;107;63;212mrenamed[0m[38;2;107;96;0m:    a.txt -> b.txt[0m
+
+[38;2;138;101;0mChanges not staged for commit:[0m
+	[38;2;138;101;0mmodified:[0m[38;2;107;96;0m   go.mod[0m
+
+[1;38;2;192;48;95mUntracked files:[0m
+	[38;2;107;96;0mnotes.md[0m
+	[38;2;107;96;0mscratch/[0m
+
+[38;2;138;101;0mno changes added to commit (use "git add" and/or "git commit -a")[0m
