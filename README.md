@@ -23,11 +23,11 @@ The default colorscheme is `magenta`. It has a dark theme and a light theme, and
 
 This is the dark theme:
 
-<img src="docs/magenta-dark.png" alt="The magenta colorscheme in its dark theme, showing its palette, a git diff, a git log, and an application log" width="720">
+<img src="docs/magenta-dark.png" alt="The magenta colorscheme in its dark theme, showing its palette, a git diff, a git log, and an application log" width="480">
 
 And this is the light theme:
 
-<img src="docs/magenta-light.png" alt="The magenta colorscheme in its light theme, showing its palette, a git diff, a git log, and an application log" width="720">
+<img src="docs/magenta-light.png" alt="The magenta colorscheme in its light theme, showing its palette, a git diff, a git log, and an application log" width="480">
 
 The package has two commands:
 
