@@ -1,0 +1,12 @@
+In file included from main.c:3:
+main.c:12:5: error: expected ; before return
+   12 |     return 0
+      |     ^~~~~~
+src/lib/util.cpp:88:17: warning: unused variable x [-Wunused-variable]
+src/lib/util.h:9:1: note: declared here
+./main.go:14:2: undefined: foo
+cmd/mgnt/main.go:7:2: "os" imported and not used
+error[E0382]: borrow of moved value: `v`
+ --> src/main.rs:4:20
+warning: unused import: `std::fmt`
+make: *** [Makefile:12: build] Error 1

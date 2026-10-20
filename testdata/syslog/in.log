@@ -1,0 +1,6 @@
+Oct  6 10:00:01 web1 systemd[1]: Started Daily apt download activities.
+Oct  6 10:00:02 web1 sshd[812]: Failed password for invalid user admin from 203.0.113.7 port 52144 ssh2
+Oct  6 10:00:03 web1 kernel: [12345.678901] Out of memory: Killed process 4321 (java)
+Oct  6 10:00:04 web1 nginx[999]: worker process exited, will retry
+2026-10-06T10:00:05.123456+02:00 web1 sshd[813]: Accepted publickey for deploy from 198.51.100.2 port 40022
+2026-10-06T10:00:06.000001+02:00 web1 CRON[1234]: pam_unix(cron:session): session closed for user root

@@ -1,0 +1,62 @@
+# syslog, journalctl --output=short, and /var/log/messages style lines.
+name = "syslog"
+detect = [
+  '^[A-Z][a-z]{2}\s+\d{1,2} \d\d:\d\d:\d\d \S+ [\w./@-]+(?:\[\d+\])?: ',
+  '^\d{4}-\d\d-\d\dT[\d:.]+(?:[+-]\d\d:\d\d|Z) \S+ [\w./@-]+(?:\[\d+\])?: ',
+]
+filenames = ["syslog", "syslog.*", "messages", "messages.*", "auth.log", "daemon.log", "kern.log", "journal*.log"]
+sample = [
+  'Oct  6 10:00:01 web1 systemd[1]: Started Daily apt download activities.',
+  'Oct  6 10:00:02 web1 sshd[812]: Failed password for invalid user admin from 203.0.113.7 port 52144 ssh2',
+  'Oct  6 10:00:03 web1 kernel: [12345.678901] Out of memory: Killed process 4321 (java)',
+  '2026-10-06T10:00:04.123456+02:00 web1 nginx[999]: worker process exited with fatal error',
+  'Oct  6 10:00:05 web1 CRON[1234]: pam_unix(cron:session): session closed for user root',
+]
+
+[[context.default.rule]]
+regex = '^([A-Z][a-z]{2}\s+\d{1,2} \d\d:\d\d:\d\d) (\S+) ([\w./@-]+)(?:\[(\d+)\])?:'
+captures = ["timestamp", "name", "key", "pid"]
+
+[[context.default.rule]]
+regex = '^(\d{4}-\d\d-\d\dT[\d:.]+(?:[+-]\d\d:\d\d|Z)) (\S+) ([\w./@-]+)(?:\[(\d+)\])?:'
+captures = ["timestamp", "name", "key", "pid"]
+
+[[context.default.rule]]
+regex = '(?i)\b(?:emerg|alert|crit|critical|panic|fatal|oom|out of memory|segfault|killed process)\b'
+scope = "level.fatal"
+
+[[context.default.rule]]
+regex = '(?i)\b(?:error|err|failed|failure|denied|refused|invalid|timed out|unreachable)\b'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '(?i)\b(?:warn|warning|deprecated|retry|retrying)\b'
+scope = "level.warn"
+
+[[context.default.rule]]
+regex = '(?i)\b(?:started|starting|accepted|opened|success|succeeded|reached target|listening)\b'
+scope = "level.info"
+
+[[context.default.rule]]
+regex = '\b[a-z][a-z0-9+.-]*://[^\s"<>)\]]+'
+scope = "url"
+
+[[context.default.rule]]
+regex = '\b(?:\d{1,3}\.){3}\d{1,3}\b'
+scope = "ip"
+
+[[context.default.rule]]
+regex = '\b(user|uid|gid|port|pid)[ =](\w+)'
+captures = ["key", "value"]
+
+[[context.default.rule]]
+regex = '(?:^|[\s(=\[])(/[\w./@%+~-]+)'
+captures = ["path"]
+
+[[context.default.rule]]
+regex = '\[\s*\d+\.\d+\]'
+scope = "timestamp"
+
+[[context.default.rule]]
+regex = '\b\d+\b'
+scope = "number"

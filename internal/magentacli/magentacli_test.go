@@ -406,7 +406,7 @@ to = "nowhere"
 	}
 	// Without an argument everything is checked, and the built-ins pass.
 	f.mustRun("rule", "check")
-	if strings.Count(f.stdout.String(), "ok: ") != 8 {
+	if strings.Count(f.stdout.String(), "ok: ") != 12 {
 		t.Errorf("%s", f.stdout.String())
 	}
 	f.mustRun("colorscheme", "check")
@@ -643,7 +643,7 @@ func TestDoctor(t *testing.T) {
 	out := f.stdout.String()
 	for _, want := range []string{
 		"magenta dev", config.Dir(), "theme        auto, using dark", "colorscheme  magenta (built-in)",
-		"8 rule file(s)", "unicorn        user (overrides built-in)", "cron           built-in",
+		"12 rule file(s)", "unicorn        user (overrides built-in)", "cron           built-in",
 		`truecolor (COLORTERM="truecolor"`,
 		"/usr/local/bin/fzf 0.20.0 (brew)", "the / search is available",
 		"preview pane (>= 0.18.0): yes", "preview border (>= 0.27.0): no", "preview on Enter, closed with Esc (>= 0.49.0): no",

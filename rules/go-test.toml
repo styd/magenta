@@ -1,0 +1,72 @@
+# go test output, plain and with -v.
+name = "go-test"
+detect = [
+  '^(?:=== (?:RUN|PAUSE|CONT)\s|\s*--- (?:PASS|FAIL|SKIP): )',
+  '^(?:ok|FAIL|\?)\s+\S+\s+(?:[\d.]+s|\(cached\)|\[no test files\]|\[build failed\])',
+  '^(?:PASS|FAIL)$',
+]
+filenames = ["go-test*.txt", "gotest*.log"]
+sample = [
+  '=== RUN   TestParse/empty',
+  '    --- PASS: TestParse/empty (0.00s)',
+  '--- FAIL: TestRender (0.02s)',
+  '--- SKIP: TestTTY (0.00s)',
+  '    render_test.go:42: got "a", want "b"',
+  "ok  \tgithub.com/styd/magenta/internal/rules\t0.412s",
+  "FAIL\tgithub.com/styd/magenta/internal/render\t0.101s",
+  "?   \tgithub.com/styd/magenta/cmd/mgnt\t[no test files]",
+  'PASS',
+  'panic: runtime error: index out of range [3] with length 3',
+]
+
+[[context.default.rule]]
+regex = '^\s*(=== (?:RUN|PAUSE|CONT|NAME))\s+(\S+)'
+captures = ["key", "name"]
+
+[[context.default.rule]]
+regex = '^\s*--- (PASS): (\S+) \(([\d.]+s)\)'
+captures = ["level.info", "name", "duration"]
+
+[[context.default.rule]]
+regex = '^\s*--- (FAIL): (\S+) \(([\d.]+s)\)'
+captures = ["level.error", "name", "duration"]
+
+[[context.default.rule]]
+regex = '^\s*--- (SKIP): (\S+) \(([\d.]+s)\)'
+captures = ["level.warn", "name", "duration"]
+
+[[context.default.rule]]
+regex = '^(ok)\s+(\S+)\s+([\d.]+s|\(cached\))'
+captures = ["level.info", "path", "duration"]
+
+[[context.default.rule]]
+regex = '^(FAIL)\s+(\S+)\s+(?:([\d.]+s)|(\[build failed\]|\[setup failed\]))'
+captures = ["level.error", "path", "duration", "level.error"]
+
+[[context.default.rule]]
+regex = '^(\?)\s+(\S+)\s+(\[no test files\])'
+captures = ["level.debug", "path", "level.debug"]
+
+[[context.default.rule]]
+regex = '^PASS$'
+scope = "level.info"
+
+[[context.default.rule]]
+regex = '^FAIL$'
+scope = "level.error"
+
+[[context.default.rule]]
+regex = '^\s+([\w./-]+\.go):(\d+):'
+captures = ["path", "number"]
+
+[[context.default.rule]]
+regex = '^(panic:)(.*)$'
+captures = ["level.fatal", "exception.class"]
+
+[[context.default.rule]]
+regex = '^(goroutine \d+) \[([^\]]+)\]:'
+captures = ["stack.frame", "stack.frame"]
+
+[[context.default.rule]]
+regex = '^\s+(/\S+\.go):(\d+)'
+captures = ["path", "number"]

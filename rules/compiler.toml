@@ -1,0 +1,67 @@
+# Compiler and linter diagnostics: gcc, clang, go build, rustc (short form), tsc, and similar.
+name = "compiler"
+detect = [
+  '^[\w./+-]+:\d+:\d+: (?:fatal error|error|warning|note): ',
+  '^[\w./+-]+\.(?:go|c|cc|cpp|h|rs|ts|tsx):\d+(?::\d+)?: ',
+  '^(?:error|warning)(?:\[[A-Z]\d+\])?: ',
+]
+filenames = ["build*.log", "make*.log", "compile*.log"]
+sample = [
+  'main.c:12:5: error: expected ; before return',
+  'src/lib/util.cpp:88:17: warning: unused variable x [-Wunused-variable]',
+  'src/lib/util.h:9:1: note: declared here',
+  'In file included from main.c:3:',
+  './main.go:14:2: undefined: foo',
+  'cmd/mgnt/main.go:7:2: "os" imported and not used',
+  'error[E0382]: borrow of moved value: v',
+  'warning: unused import: std::fmt',
+  'make: *** [Makefile:12: build] Error 1',
+]
+
+[[context.default.rule]]
+regex = '^([\w./+-]+):(\d+):(\d+): (fatal error|error):'
+captures = ["path", "number", "number", "level.error"]
+
+[[context.default.rule]]
+regex = '^([\w./+-]+):(\d+):(\d+): (warning):'
+captures = ["path", "number", "number", "level.warn"]
+
+[[context.default.rule]]
+regex = '^([\w./+-]+):(\d+):(\d+): (note):'
+captures = ["path", "number", "number", "level.info"]
+
+[[context.default.rule]]
+regex = '^([\w./+-]+):(\d+)(?::(\d+))?: '
+captures = ["path", "number", "number"]
+
+[[context.default.rule]]
+regex = '^(error)(\[[A-Z]\d+\])?(:)'
+captures = ["level.error", "constant", "level.error"]
+
+[[context.default.rule]]
+regex = '^(warning)(\[[\w-]+\])?(:)'
+captures = ["level.warn", "constant", "level.warn"]
+
+[[context.default.rule]]
+regex = '^(\s*-->)\s+([\w./+-]+):(\d+):(\d+)'
+captures = ["key", "path", "number", "number"]
+
+[[context.default.rule]]
+regex = '^(In file included from|from) ([\w./+-]+):(\d+)'
+captures = ["key", "path", "number"]
+
+[[context.default.rule]]
+regex = '\[(-W[\w+-]+)\]'
+captures = ["constant"]
+
+[[context.default.rule]]
+regex = '\x60([^\x60]+)\x60|‘([^’]+)’|\x27([^\x27]+)\x27'
+scope = "string"
+
+[[context.default.rule]]
+regex = '^(make(?:\[\d+\])?:) (\*\*\*)(.*)$'
+captures = ["key", "level.error", "level.error"]
+
+[[context.default.rule]]
+regex = '^\s*\^[~^]*\s*$'
+scope = "level.error"

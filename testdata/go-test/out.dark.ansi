@@ -1,0 +1,20 @@
+[38;2;224;184;255m=== RUN[0m   [38;2;180;218;255mTestParse[0m
+[38;2;224;184;255m=== RUN[0m   [38;2;180;218;255mTestParse/empty[0m
+    --- [38;2;180;218;255mPASS[0m: [38;2;180;218;255mTestParse/empty[0m ([38;2;242;212;155m0.00s[0m)
+--- [38;2;180;218;255mPASS[0m: [38;2;180;218;255mTestParse[0m ([38;2;242;212;155m0.00s[0m)
+[38;2;224;184;255m=== RUN[0m   [38;2;180;218;255mTestRender[0m
+    [38;2;251;243;200mrender_test.go[0m:[38;2;242;212;155m42[0m: got "a", want "b"
+--- [1;38;2;242;143;176mFAIL[0m: [38;2;180;218;255mTestRender[0m ([38;2;242;212;155m0.02s[0m)
+[38;2;224;184;255m=== RUN[0m   [38;2;180;218;255mTestTTY[0m
+--- [38;2;247;224;138mSKIP[0m: [38;2;180;218;255mTestTTY[0m ([38;2;242;212;155m0.00s[0m)
+[1;38;2;242;143;176mFAIL[0m
+[1;38;2;242;143;176mFAIL[0m	[38;2;251;243;200mgithub.com/styd/magenta/internal/render[0m	[38;2;242;212;155m0.101s[0m
+[38;2;180;218;255mok[0m  	[38;2;251;243;200mgithub.com/styd/magenta/internal/rules[0m	[38;2;242;212;155m0.412s[0m
+[38;2;180;218;255mok[0m  	[38;2;251;243;200mgithub.com/styd/magenta/internal/config[0m	[38;2;242;212;155m(cached)[0m
+[38;2;154;140;198m?[0m   	[38;2;251;243;200mgithub.com/styd/magenta/cmd/mgnt[0m	[38;2;154;140;198m[no test files][0m
+[1;38;2;242;143;176mpanic:[0m[38;2;180;218;255m runtime error: index out of range [3] with length 3[0m
+
+[38;2;154;140;198mgoroutine 7[0m [[38;2;154;140;198mrunning[0m]:
+github.com/styd/magenta/internal/engine.(*H).Line(0x0)
+	[38;2;251;243;200m/src/internal/engine/engine.go[0m:[38;2;242;212;155m88[0m +0x1c
+[38;2;180;218;255mPASS[0m
