@@ -108,8 +108,10 @@ wait_for "67/67"                      # fzf holds every line of the page
 send "'kraken"
 wait_for "1/67"                       # one match: the bold word
 wait_for "is hiding here"
+# Leave the search and wait for it to close before the next key, so that the
+# terminal does not read Esc followed by q as one Alt key.
 send Escape
-send Escape
+wait_gone "1/67"
 send q
 wait_for "mgnt-exit-0"
 echo "smoke: ok"
