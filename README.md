@@ -2,7 +2,7 @@
 
 A viewer for logs and command output in your terminal. It colors text by what kind it is, pages through long output, follows a log as it grows, and searches it with [fzf](https://github.com/junegunn/fzf) while it streams in.
 
-- **Colors** each line by what it is. It detects the kind of input on its own: logs (unicorn, cron, rails, nginx, JSON lines, syslog) and the output of commands (`git`, `jj`, `go test`, `pytest`, `terraform`, `docker build`, `curl -v`, and more).
+- **Colors** each line by what it is. It detects the kind of input on its own: logs (unicorn, cron, rails, nginx, JSON lines, syslog) and the output of commands (`git`, `jj`, `go test`, `pytest`, `terraform`, `docker build`, `curl -v`, `man`, and more).
 - **Pages** long output in a full-screen pager, like `less`.
 - **Follows** a log that keeps growing, like `tail -f`.
 - **Searches** with the real fzf. Press `/` at any time, while new lines keep arriving.
@@ -62,6 +62,7 @@ The package has two commands:
 tail -f unicorn.log | mgnt         # follow a log
 git log -p | mgnt                  # color a git log
 git diff | mgnt
+man ls | mgnt                      # color a manual page, and search it
 jj log | mgnt
 go test ./... 2>&1 | mgnt
 mgnt app.log                       # a file, paged if it is long
@@ -77,7 +78,7 @@ magenta preview                    # every rule's sample lines in the current co
 
 Color is always on, including when output is piped (`mgnt app.log | less -R` works). It is off only when `NO_COLOR` is set and non-empty, or `TERM=dumb`. The color depth (truecolor, 256 or 16) is picked from `COLORTERM` and `TERM`.
 
-Lines are never changed: removing the color codes from the output gives back the input, byte for byte. (If the input has its own color codes, they are replaced by ours. Set `ansi = "keep"` to leave lines alone.) Lines longer than 64 KiB pass through uncolored.
+Lines are never changed: removing the color codes from the output gives back the input, byte for byte. (If the input has its own color codes, they are replaced by ours. The same goes for the bold and underline that `man` writes with backspaces, which are turned into plain text first. Set `ansi = "keep"` to leave lines alone.) Lines longer than 64 KiB pass through uncolored.
 
 Press `/` in the pager or in a followed log to search with fzf.
 

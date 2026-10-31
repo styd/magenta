@@ -9,7 +9,7 @@ All settings live in `config.toml` and can be changed for one run with `mgnt` op
 | `colorscheme` | `magenta` | the colorscheme to use, a name from `magenta colorscheme list` |
 | `theme` | `auto` | `dark` or `light`, which palette of the colorscheme to use. `auto` picks one by the terminal background |
 | `buffer` | `100000` | lines kept for the `/` search |
-| `ansi` | `strip` | `strip` removes colors already in the input, and `keep` passes lines through untouched |
+| `ansi` | `strip` | `strip` removes colors already in the input, and the bold and underline that `man` writes with backspaces. `keep` passes lines through untouched |
 | `fzf_opts` | | extra fzf options, added after the ones `mgnt` needs |
 | `preview` | `true` | show the preview pane |
 | `preview_window` | `up,50%,wrap,border-bottom,hidden` | fzf's `--preview-window`. With `hidden` the preview opens on Enter and closes on Esc |

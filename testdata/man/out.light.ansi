@@ -1,0 +1,45 @@
+
+[38;2;106;90;153mLS(1)                     General Commands Manual                    LS(1)[0m
+
+[38;2;162;63;196mNAME[0m
+     ls – list directory contents
+
+[38;2;162;63;196mSYNOPSIS[0m
+     ls [[38;2;107;63;212m-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,[0m] [[38;2;107;63;212m--color[0m=when] [[38;2;107;63;212m-D[0m format] [file ...]
+
+[38;2;162;63;196mDESCRIPTION[0m
+     For each operand that names a file of type directory, ls displays the names
+     of files contained within that directory, as well as any requested,
+     associated information.
+
+     If no operands are given, the contents of the current directory are
+     displayed.  If more than one operand is given, non-directory operands are
+     displayed first.
+
+     The following options are available:
+
+     [38;2;107;63;212m-a[0m      Include directory entries whose names begin with a dot (‘.’).
+
+     [38;2;107;63;212m-l[0m      List files in the long format, as described in the The Long Format
+             subsection below.
+
+     [38;2;107;63;212m--color[0m=when
+             Color output when it goes to a terminal.  The default is never.
+
+[38;2;162;63;196mENVIRONMENT[0m
+     The following environment variables affect the execution of ls:
+
+     CLICOLOR  Use ANSI color sequences to distinguish file types.
+
+[38;2;23;79;156m   The Long Format[0m
+     If the [38;2;107;63;212m-l[0m option is given, the following information is displayed for each
+     file: file mode, number of links, owner name, group name, and file name.
+
+[38;2;162;63;196mFILES[0m
+     Defaults are read from [38;2;107;96;0m~/.config/ls[0m and [38;2;107;96;0m/etc/ls.conf[0m, if they exist.
+
+[38;2;162;63;196mSEE ALSO[0m
+     [38;2;23;79;156mchmod[0m[38;2;163;95;0m(1)[0m, [38;2;23;79;156msort[0m[38;2;163;95;0m(1)[0m, [38;2;23;79;156mgetfacl[0m[38;2;163;95;0m(1)[0m, [38;2;23;79;156mxattr[0m[38;2;163;95;0m(7)[0m, [38;2;23;79;156msticky[0m[38;2;163;95;0m(7)[0m
+     See [38;2;107;96;0mhttps://example.com/ls[0m for more.
+
+macOS 14.0                      January 1, 2024                     macOS 14.0

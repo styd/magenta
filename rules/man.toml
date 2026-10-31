@@ -1,0 +1,58 @@
+# Manual pages, as `man ls | mgnt` prints them. Piped man output marks bold
+# and underline with overstrikes (N, backspace, N), which mgnt resolves before
+# the rules run, so these rules see plain text.
+name = "man"
+detect = [
+  '^[\w.:+-]+\(\d\w*\)\s{2,}.*\S\s{2,}[\w.:+-]+\(\d\w*\)$',
+  '^(?:NAME|SYNOPSIS|DESCRIPTION|OPTIONS|EXIT STATUS|ENVIRONMENT|FILES|EXAMPLES|SEE ALSO|AUTHORS?|BUGS|HISTORY)$',
+]
+filenames = ["*.man", "man-*.txt"]
+sample = [
+  'LS(1)                     General Commands Manual                    LS(1)',
+  'NAME',
+  'SYNOPSIS',
+  '     ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [file ...]',
+  'DESCRIPTION',
+  '     -a      Include directory entries whose names begin with a dot (‘.’).',
+  '     --color=when',
+  '   Exit status',
+  '     Files are read from ~/.config/ls and /etc/ls.conf.',
+  '     See https://example.com/ls for more, and chmod(1) or sort(1).',
+]
+
+# The page header and footer.
+[[context.default.rule]]
+regex = '^[\w.:+-]+\(\d\w*\)\s{2,}.*\S\s{2,}[\w.:+-]+\(\d\w*\)$'
+scope = "level.debug"
+stop = true
+
+# Section headings, all capitals at the left margin.
+[[context.default.rule]]
+regex = '^[A-Z][A-Z0-9 ,/&-]*$'
+scope = "key"
+stop = true
+
+# Subsection headings, indented by three spaces.
+[[context.default.rule]]
+regex = '^ {3}\S.*$'
+scope = "name"
+stop = true
+
+[[context.default.rule]]
+regex = '\bhttps?://[^\s)>\]]+'
+scope = "url"
+
+# References to other pages: chmod(1), sort(1).
+[[context.default.rule]]
+regex = '\b([\w.:+-]+)(\(\d\w*\))'
+captures = ["name", "number"]
+
+# Options: -a, --color=when.
+[[context.default.rule]]
+regex = '(?:^|[\s\[|,(])(--?[A-Za-z0-9@%][\w@%,-]*)'
+captures = ["constant"]
+
+# Paths: /etc/ls.conf, ~/.config/ls.
+[[context.default.rule]]
+regex = '(?:^|[\s(])((?:~|\$\w+)?/[\w.+-]+(?:/[\w.+-]*)*)'
+captures = ["path"]

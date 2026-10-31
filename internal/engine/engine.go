@@ -21,7 +21,7 @@ type Highlighter struct {
 	plain  bool     // no scope has a style: nothing to add
 	ctx    int
 	paint  []int32 // scope id per byte of the current line, -1 for none
-	clean  []byte  // the current line without SGR sequences
+	clean  []byte  // the current line without SGR sequences and overstrikes
 }
 
 // New returns a Highlighter. starts is indexed like c.Scopes (see
@@ -41,7 +41,8 @@ func (h *Highlighter) Reset() { h.ctx = 0 }
 
 // Highlight appends the colored line to dst and returns it. line has no
 // trailing newline. A trailing carriage return is kept after the colors.
-// Removing the escape sequences from the output gives back the input.
+// Removing the escape sequences from the output gives back the input, except
+// that overstrikes (man page bold and underline) are resolved first.
 func (h *Highlighter) Highlight(dst, line []byte) []byte {
 	if len(line) > MaxLine || h.keep {
 		return append(dst, line...)
@@ -51,8 +52,8 @@ func (h *Highlighter) Highlight(dst, line []byte) []byte {
 		line, cr = line[:n-1], true
 	}
 	text := line
-	if bytes.IndexByte(line, 0x1b) >= 0 {
-		h.clean = render.StripSGR(h.clean[:0], line)
+	if render.NeedsPlain(line) {
+		h.clean = render.Plain(h.clean[:0], line)
 		text = h.clean
 	}
 	if h.plain {

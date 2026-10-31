@@ -136,7 +136,7 @@ func (p *Pipeline) Finish(emit Emit) {
 func (p *Pipeline) decide(emit Emit) {
 	plain := make([][]byte, len(p.pending))
 	for i, l := range p.pending {
-		plain[i] = render.StripSGR(nil, l.text)
+		plain[i] = render.Plain(nil, l.text)
 	}
 	res := detect.Choose(p.detectors(), plain, p.cfg.Filename)
 	p.lockOn(res.Picked)
@@ -177,7 +177,7 @@ func (p *Pipeline) lockOn(name string) {
 func (p *Pipeline) emitLine(text []byte, nl bool, emit Emit) {
 	if p.passthrough {
 		if p.cfg.ANSI != "keep" {
-			p.scratch = render.StripSGR(p.scratch[:0], text)
+			p.scratch = render.Plain(p.scratch[:0], text)
 			text = p.scratch
 		}
 		emit(text, nl)
@@ -194,7 +194,7 @@ func (p *Pipeline) emitLine(text []byte, nl bool, emit Emit) {
 // recent lines.
 func (p *Pipeline) watch(text []byte) {
 	i := p.nrecent % len(p.recent)
-	p.recent[i] = render.StripSGR(p.recent[i][:0], text)
+	p.recent[i] = render.Plain(p.recent[i][:0], text)
 	p.nrecent++
 	if p.det != nil && p.matchesDetect(p.recent[i]) {
 		p.unmatched = 0

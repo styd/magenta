@@ -146,3 +146,34 @@ func TestHex(t *testing.T) {
 		}
 	}
 }
+
+func TestPlain(t *testing.T) {
+	for _, tc := range []struct{ name, in, want string }{
+		{"nothing to do", "plain text", "plain text"},
+		{"sgr", "\x1b[1mbold\x1b[0m text", "bold text"},
+		{"bold overstrike", "N\bNA\bAM\bME\bE", "NAME"},
+		{"triple strike", "x\bx\bx", "x"},
+		{"underline before", "_\bf_\bi_\bl_\be", "file"},
+		{"underline after", "f\b_i\b_l\b_e\b_", "file"},
+		{"multibyte", "•\b•\b• é\bé", "• é"},
+		{"sgr and overstrike", "\x1b[1ma\ba\x1b[0m", "a"},
+		{"progress bar kept", "50%\b\b\b60%", "50%\b\b\b60%"},
+		{"unrelated backspace kept", "a\bb", "a\bb"},
+		{"trailing backspace kept", "a\b", "a\b"},
+		{"invalid utf-8 kept", "\xff\b\xff", "\xff"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := string(Plain([]byte("pre:"), []byte(tc.in))); got != "pre:"+tc.want {
+				t.Errorf("Plain(%q) = %q, want %q", tc.in, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestNeedsPlain(t *testing.T) {
+	for in, want := range map[string]bool{"plain": false, "\x1b[1m": true, "a\bb": true, "": false} {
+		if got := NeedsPlain([]byte(in)); got != want {
+			t.Errorf("NeedsPlain(%q) = %v", in, got)
+		}
+	}
+}

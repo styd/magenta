@@ -1,0 +1,45 @@
+
+LS(1)                     General Commands Manual                    LS(1)
+
+NAME
+     ls – list directory contents
+
+SYNOPSIS
+     ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...]
+
+DESCRIPTION
+     For each operand that names a file of type directory, ls displays the names
+     of files contained within that directory, as well as any requested,
+     associated information.
+
+     If no operands are given, the contents of the current directory are
+     displayed.  If more than one operand is given, non-directory operands are
+     displayed first.
+
+     The following options are available:
+
+     -a      Include directory entries whose names begin with a dot (‘.’).
+
+     -l      List files in the long format, as described in the The Long Format
+             subsection below.
+
+     --color=when
+             Color output when it goes to a terminal.  The default is never.
+
+ENVIRONMENT
+     The following environment variables affect the execution of ls:
+
+     CLICOLOR  Use ANSI color sequences to distinguish file types.
+
+   The Long Format
+     If the -l option is given, the following information is displayed for each
+     file: file mode, number of links, owner name, group name, and file name.
+
+FILES
+     Defaults are read from ~/.config/ls and /etc/ls.conf, if they exist.
+
+SEE ALSO
+     chmod(1), sort(1), getfacl(1), xattr(7), sticky(7)
+     See https://example.com/ls for more.
+
+macOS 14.0                      January 1, 2024                     macOS 14.0

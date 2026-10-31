@@ -242,7 +242,7 @@ func readSample(path string) ([][]byte, error) {
 	sc.Buffer(make([]byte, 64<<10), 1<<20)
 	var ls [][]byte
 	for len(ls) < detect.SampleLines && sc.Scan() {
-		ls = append(ls, render.StripSGR(nil, sc.Bytes()))
+		ls = append(ls, render.Plain(nil, sc.Bytes()))
 	}
 	return ls, nil
 }

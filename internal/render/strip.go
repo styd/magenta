@@ -1,5 +1,7 @@
 package render
 
+import "bytes"
+
 // StripSGR appends src to dst with SGR sequences (ESC [ params m) removed.
 // Other bytes, including other escape sequences, are kept.
 func StripSGR(dst, src []byte) []byte {
@@ -10,6 +12,43 @@ func StripSGR(dst, src []byte) []byte {
 		}
 		dst = append(dst, src[i])
 		i++
+	}
+	return dst
+}
+
+// NeedsPlain reports whether Plain could change b: it holds an escape or a backspace.
+func NeedsPlain(b []byte) bool {
+	return bytes.IndexByte(b, 0x1b) >= 0 || bytes.IndexByte(b, '\b') >= 0
+}
+
+// Plain appends src to dst with SGR sequences removed and overstrikes
+// resolved. An overstrike is how man pages piped into a program mark text:
+// X, a backspace, and X again is bold X, and _, a backspace, and X (or X, a
+// backspace, and _) is underlined X. Other backspaces are kept.
+func Plain(dst, src []byte) []byte {
+	for i := 0; i < len(src); {
+		if n := sgrLen(src[i:]); n > 0 {
+			i += n
+			continue
+		}
+		r, size := decodeRune(src[i:])
+		cur := src[i : i+size]
+		i += size
+		for r != '\b' && i+1 < len(src) && src[i] == '\b' {
+			r2, size2 := decodeRune(src[i+1:])
+			next := src[i+1 : i+1+size2]
+			if r2 == '\b' {
+				break
+			} else if r2 == r || r2 == '_' {
+				// bold, or underline after the letter: keep the letter
+			} else if r == '_' {
+				r, cur = r2, next
+			} else {
+				break
+			}
+			i += 1 + size2
+		}
+		dst = append(dst, cur...)
 	}
 	return dst
 }

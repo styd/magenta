@@ -57,7 +57,7 @@ func runString(t testing.TB, cfg Config, in string) (string, *Pipeline) {
 }
 
 func TestDetectsAndPreservesText(t *testing.T) {
-	for name, rule := range map[string]string{"unicorn": "unicorn", "git-diff": "git-diff", "nginx-access": "nginx-access", "jsonl": "jsonl", "generic": "generic"} {
+	for name, rule := range map[string]string{"unicorn": "unicorn", "git-diff": "git-diff", "nginx-access": "nginx-access", "jsonl": "jsonl", "man": "man", "generic": "generic"} {
 		data, err := os.ReadFile("../../testdata/" + name + "/in.log")
 		if err != nil {
 			t.Fatal(err)
@@ -72,6 +72,59 @@ func TestDetectsAndPreservesText(t *testing.T) {
 		if got == string(data) {
 			t.Errorf("%s: no color", name)
 		}
+	}
+}
+
+// overstrike writes text the way man does when its output is piped: bold
+// letters are struck twice, and underlined ones follow an underscore.
+func overstrike(text string, bold bool) string {
+	var b strings.Builder
+	for _, r := range text {
+		if r == ' ' {
+			b.WriteRune(r)
+		} else if bold {
+			fmt.Fprintf(&b, "%c\b%c", r, r)
+		} else {
+			fmt.Fprintf(&b, "_\b%c", r)
+		}
+	}
+	return b.String()
+}
+
+func TestManOutputWithOverstrikes(t *testing.T) {
+	plain, err := os.ReadFile("../../testdata/man/in.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var in strings.Builder
+	for _, l := range strings.Split(strings.TrimSuffix(string(plain), "\n"), "\n") {
+		switch {
+		case l != "" && l == strings.ToUpper(l) && !strings.HasPrefix(l, " ") && !strings.Contains(l, "("):
+			l = overstrike(l, true) // section headings are bold
+		case strings.HasPrefix(l, "     -a "):
+			l = "     " + overstrike("-a", true) + l[len("     -a"):]
+		case strings.Contains(l, "file mode"):
+			l = strings.Replace(l, "file mode", overstrike("file mode", false), 1)
+		}
+		in.WriteString(l + "\n")
+	}
+	if !strings.Contains(in.String(), "\b") {
+		t.Fatal("the input has no overstrikes")
+	}
+	got, p := runString(t, testConfig(t, render.TrueColor, "strip", ""), in.String())
+	if p.Rule() != "man" {
+		t.Errorf("rule %q", p.Rule())
+	}
+	if visible(got) != string(plain) {
+		t.Errorf("overstrikes were not resolved:\n%q", visible(got))
+	}
+	if !strings.Contains(got, "\x1b[") {
+		t.Error("no color")
+	}
+	// With ansi = "keep" the input is left alone.
+	raw, _ := runString(t, testConfig(t, render.TrueColor, "keep", ""), in.String())
+	if raw != in.String() {
+		t.Error("keep changed the input")
 	}
 }
 
