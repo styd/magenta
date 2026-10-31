@@ -1,0 +1,248 @@
+.TH MGNT 1 "October 31, 2026" "magenta" "User Commands"
+.SH NAME
+mgnt \- color, page, follow, and search logs and command output
+.SH SYNOPSIS
+.B mgnt
+[\fIoptions\fR] [\fIfile\fR ...]
+.SH DESCRIPTION
+.B mgnt
+reads logs or the output of commands, from files or standard input, and colors each line by what kind it is.
+It detects the kind of input on its own.
+It knows logs such as unicorn, cron, rails, nginx, JSON lines, and syslog, and the output of commands such as
+.BR git (1),
+.BR jj ,
+.BR "go test" ,
+.BR pytest ,
+.BR terraform ,
+.BR "docker build" ,
+and
+.BR "curl \-v" .
+.PP
+When standard output is a terminal,
+.B mgnt
+also behaves like
+.BR less (1).
+Output that fits on the screen is printed.
+A lot of output that is ready at once opens a full-screen pager that scrolls both ways.
+A log that keeps growing, such as the output of
+.BR "tail \-f" ,
+streams into the terminal scrollback.
+Press
+.B /
+in the pager or in a followed log to search with
+.BR fzf (1)
+while new lines keep arriving.
+.PP
+When the output is not a terminal, or with
+.BR \-\-no\-interactive ,
+.B mgnt
+only colors.
+.PP
+Lines are never changed.
+Removing the color codes from the output gives back the input, byte for byte.
+Lines longer than 64 KiB pass through uncolored.
+.PP
+.B mgnt
+shows logs and never changes any file.
+To manage its rules, colorschemes, and settings, use
+.BR magenta (1).
+.SH OPTIONS
+Options change a setting for one run only and never write
+.IR config.toml .
+.TP
+.BI \-\-ansi " strip" | keep
+What to do with colors already in the input.
+.B strip
+replaces them with the colors of
+.BR mgnt ,
+and
+.B keep
+leaves the lines alone.
+.TP
+.BI \-\-buffer " lines"
+The number of lines kept for the
+.B /
+search.
+.TP
+.BI \-\-colorscheme " name"
+Use this colorscheme.
+The names are listed by
+.BR "magenta colorscheme list" .
+.TP
+.BI \-\-fzf\-opts " options"
+Extra
+.BR fzf (1)
+options.
+.TP
+.BR \-h ", " \-\-help
+Show the help and exit.
+.TP
+.B \-\-no\-interactive
+Never open the pager or the fzf search.
+Only color the input.
+.TP
+.B \-\-no\-preview
+Do not show the preview pane in the
+.B /
+search.
+.TP
+.BI \-\-set " key" = value
+Change any setting of
+.IR config.toml ,
+such as
+.B \-\-set preview_window=right,40%
+or
+.BR \-\-set\ keys.accept=enter .
+It can be repeated and is applied after the other options.
+.TP
+.BI \-\-theme " auto" | dark | light
+Use the dark or the light palette of the colorscheme.
+.B auto
+picks one by the background of the terminal.
+.TP
+.B \-\-version
+Show the version and exit.
+.SH PAGER KEYS
+.TP
+.BR j ", " Down ", " Enter
+One line down.
+.TP
+.BR k ", " Up ", " y
+One line up.
+.TP
+.BR Space ", " f ", " PageDown
+One screen down.
+.TP
+.BR b ", " PageUp
+One screen up.
+.TP
+.BR d " and " u
+Half a screen down and up.
+.TP
+.BR g " and " G
+The top and the end.
+.TP
+.B F
+Follow: stay on the newest line as the input grows.
+Any key stops it.
+.TP
+.B w
+Chop long lines instead of wrapping them, and back.
+.TP
+.B #
+Show line numbers.
+.TP
+.BR n " and " N
+The next and the previous match of the last search.
+.TP
+.B /
+Search with fzf.
+.TP
+.BR q ", " Ctrl\-C
+Quit.
+.PP
+In the search,
+.B Ctrl\-o
+accepts: it jumps to the line in the pager, or prints the selected lines in a followed log.
+.B Ctrl\-/
+opens and closes the preview of the lines around a match, and
+.B Esc
+leaves.
+Both keys can be changed in
+.IR config.toml .
+The preview pane needs
+.BR fzf (1)
+0.49.0 or newer.
+Search without a preview works with older versions.
+.SH FILES
+.TP
+.I $XDG_CONFIG_HOME/magenta/config.toml
+The settings, or
+.I ~/.config/magenta/config.toml
+when
+.B XDG_CONFIG_HOME
+is not set.
+Read each time
+.B mgnt
+starts.
+Change it with
+.BR "magenta config set" .
+.TP
+.I $XDG_CONFIG_HOME/magenta/rules/
+Rules of the user.
+A file with the same name as a built-in rule replaces it.
+.TP
+.I $XDG_CONFIG_HOME/magenta/colorschemes/
+Colorschemes of the user, with the same override behavior.
+.SH ENVIRONMENT
+.TP
+.B NO_COLOR
+When set and not empty, no colors are written.
+.TP
+.B TERM
+.B dumb
+turns colors off.
+Together with
+.B COLORTERM
+it also picks the color depth: truecolor, 256 colors, or 16 colors.
+.TP
+.B MGNT_FZF_OPTS
+Extra
+.BR fzf (1)
+options, added after the
+.B fzf_opts
+setting.
+.TP
+.B XDG_CONFIG_HOME
+Where the configuration directory is.
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+A file could not be read, or the output could not be written.
+.TP
+.B 2
+The options or a setting are not valid.
+Nothing was read.
+.SH EXAMPLES
+Follow a log:
+.PP
+.RS
+.EX
+tail \-f unicorn.log | mgnt
+.EE
+.RE
+.PP
+Color and page the output of a command:
+.PP
+.RS
+.EX
+git log \-p | mgnt
+go test ./... 2>&1 | mgnt
+.EE
+.RE
+.PP
+Page a file, and pipe the colored text on:
+.PP
+.RS
+.EX
+mgnt app.log
+mgnt app.log | less \-R
+.EE
+.RE
+.PP
+Use another colorscheme for one run:
+.PP
+.RS
+.EX
+mgnt \-\-colorscheme mono app.log
+.EE
+.RE
+.SH SEE ALSO
+.BR magenta (1),
+.BR fzf (1),
+.BR less (1)
+.PP
+Documentation and source: https://github.com/styd/magenta

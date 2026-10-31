@@ -103,3 +103,12 @@ T kill-server                 # only the private one
 Add `colorschemes/<name>.toml`, and list it in the colorscheme tests (`internal/colorscheme`). Colors that are meant for reading have to meet the contrast numbers in `TestContrast` (4.5:1 against the background of the theme, and 4:1 for comments). Keep the colors in the palette and the styles pointing at them. The Go code has no color values of its own.
 
 ## Adding a setting
+
+## Manual pages
+
+`man/mgnt.1` and `man/magenta.1` are written by hand. The release puts them in the archives, the Linux packages (`/usr/share/man/man1`), and the Homebrew formula. When you add or rename an option of `mgnt` or a command of `magenta`, update the page too. `go test .` fails if a flag of `mgnt` or a command of `magenta` is missing from its page. To check the format and see the result:
+
+```
+mandoc -Tlint man/*.1
+man ./man/mgnt.1
+```

@@ -1,0 +1,209 @@
+.TH MAGENTA 1 "October 31, 2026" "magenta" "User Commands"
+.SH NAME
+magenta \- manage the rules, colorschemes, and settings of mgnt
+.SH SYNOPSIS
+.B magenta
+.I command
+[\fIarguments\fR]
+.br
+.B magenta
+.BR \-\-help | \-\-version
+.SH DESCRIPTION
+.B magenta
+manages what
+.BR mgnt (1)
+uses to color logs: the rules that tell kinds of input apart and color them, the colorschemes that hold the colors, and the settings in
+.IR config.toml .
+It never shows logs.
+To color a log, use
+.BR mgnt (1).
+.PP
+Files live in the configuration directory, which
+.B magenta doctor
+prints.
+A file of the user with the same name as a built-in one overrides it.
+A new name adds a rule or colorscheme.
+.SH COMMANDS
+.TP
+.B magenta colorscheme list
+List the colorschemes and where each one comes from.
+.TP
+.BI "magenta colorscheme show " name
+Print a colorscheme file.
+.TP
+.BI "magenta colorscheme new " name
+Create a new colorscheme file from a template.
+.TP
+.BI "magenta colorscheme edit " name
+Edit a colorscheme in
+.BR $EDITOR ,
+then check it.
+.TP
+.RI "magenta colorscheme check [" name ]
+Check a colorscheme file, or every colorscheme when none is given.
+.TP
+.BI "magenta colorscheme use " name
+Make a colorscheme the one that
+.B mgnt
+uses.
+.TP
+.B magenta rule list
+.TQ
+.BI "magenta rule show " name
+.TQ
+.BI "magenta rule new " name
+.TQ
+.BI "magenta rule edit " name
+.TQ
+.RI "magenta rule check [" name ]
+The same five commands for rules.
+.TP
+.B magenta config get
+.TQ
+.BI "magenta config get " key
+Print one setting, or all of them.
+.TP
+.BI "magenta config set " "key value"
+Change a setting in
+.IR config.toml .
+.TP
+.B magenta config path
+Print the path of
+.IR config.toml .
+.TP
+.BI "magenta detect " file
+Read the first lines of a file and print how each rule scores against them, and which rule
+.B mgnt
+would pick.
+Use it to tune the detect patterns of a rule.
+.TP
+.B magenta doctor
+Report the configuration, what
+.B mgnt
+detects, the color depth,
+.BR fzf (1),
+and how fast
+.B mgnt
+starts.
+Include its output in a bug report.
+.TP
+.B magenta init
+Copy the built-in rules and colorschemes into the configuration directory for editing, and write a
+.I config.toml
+with the defaults.
+Files that already exist are not touched.
+.TP
+.RB "magenta preview [" "rule " "[" "colorscheme" "]]"
+Print the sample lines of a rule, or of every rule, colored with a colorscheme.
+.B \-\-theme
+chooses the dark or the light palette.
+.TP
+.BI "magenta completion " shell
+Print a completion script for
+.BR bash ,
+.BR zsh ,
+.BR fish ,
+or
+.BR powershell .
+.TP
+.BR "magenta help" " [\fIcommand\fR]"
+Show the help of a command.
+.SH SETTINGS
+These keys work with
+.B magenta config set
+and as
+.B mgnt \-\-set
+values.
+.TP
+.B colorscheme
+The colorscheme to use.
+Default
+.BR magenta .
+.TP
+.B theme
+.BR dark ,
+.BR light ,
+or
+.BR auto .
+Default
+.BR auto .
+.TP
+.B buffer
+Lines kept for the search.
+Default 100000.
+.TP
+.B ansi
+.B strip
+or
+.BR keep .
+Default
+.BR strip .
+.TP
+.B fzf_opts
+Extra fzf options.
+.TP
+.B preview
+Whether the preview pane is available.
+Default
+.BR true .
+.TP
+.B preview_window
+The
+.B \-\-preview\-window
+option of fzf.
+.TP
+.B keys.preview_toggle
+.TQ
+.B keys.accept
+The keys that open the preview and that accept a line.
+.SH FILES
+.TP
+.I $XDG_CONFIG_HOME/magenta/
+The configuration directory, or
+.I ~/.config/magenta/
+when
+.B XDG_CONFIG_HOME
+is not set.
+It holds
+.IR config.toml ,
+.IR rules/ ,
+and
+.IR colorschemes/ .
+.SH ENVIRONMENT
+.TP
+.B EDITOR
+The editor for the
+.B edit
+commands.
+.TP
+.B XDG_CONFIG_HOME
+Where the configuration directory is.
+.TP
+.B NO_COLOR
+When set and not empty, no colors are written.
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+The command failed, for example a rule or colorscheme did not pass its check.
+.TP
+.B 2
+The command line is not valid.
+.SH EXAMPLES
+.RS
+.EX
+magenta doctor
+magenta colorscheme list
+magenta colorscheme use mono
+magenta config set theme light
+magenta rule new myapp
+magenta rule check
+magenta preview
+.EE
+.RE
+.SH SEE ALSO
+.BR mgnt (1)
+.PP
+Documentation and source: https://github.com/styd/magenta

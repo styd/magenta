@@ -42,6 +42,7 @@ archives:
       - README.md
       - LICENSE
       - completions/*
+      - man/*
 
 checksum:
   name_template: checksums.txt
@@ -74,6 +75,10 @@ nfpms:
         dst: /usr/share/zsh/vendor-completions/_magenta
       - src: completions/magenta.fish
         dst: /usr/share/fish/vendor_completions.d/magenta.fish
+      - src: man/mgnt.1
+        dst: /usr/share/man/man1/mgnt.1
+      - src: man/magenta.1
+        dst: /usr/share/man/man1/magenta.1
 
 # Homebrew formula (not a cask, so Linux Homebrew works too).
 brews:
@@ -92,6 +97,8 @@ brews:
       bash_completion.install "completions/magenta.bash" => "magenta"
       zsh_completion.install "completions/magenta.zsh" => "_magenta"
       fish_completion.install "completions/magenta.fish"
+      man1.install "man/mgnt.1"
+      man1.install "man/magenta.1"
     caveats: |
       mgnt's `/` search needs fzf:  brew install fzf
     test: |

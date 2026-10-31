@@ -81,6 +81,8 @@ Lines are never changed: removing the color codes from the output gives back the
 
 Press `/` in the pager or in a followed log to search with fzf.
 
+`man mgnt` and `man magenta` show the manual pages. Homebrew, the `.deb`, `.rpm`, and `.apk` packages install them. `go install` does not, so for that, or for a release archive, read them with `man ./man/mgnt.1` from a checkout or the archive, or copy `man/*.1` into a directory on your `MANPATH`.
+
 ## Documentation
 
 - [Paging and searching](docs/paging-and-search.md)
