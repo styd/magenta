@@ -21,11 +21,11 @@ This is the most useful kind of change. In short:
 Before you open a pull request, run:
 
 ```
-gofmt -l .
-go vet ./...
-go test ./...
+make lint
+make test
+make race
 ```
 
-`gofmt` should print nothing. Code that touches goroutines, channels, or the terminal should also pass `go test -race ./...`. Keep each pull request to one change, and add or update a test for it.
+`make lint` checks `gofmt` (it should print nothing), `go vet`, and staticcheck. `make race` is `go test -race ./...`, and CI runs it too, so it is worth running when you touch goroutines, channels, or the terminal code. Keep each pull request to one change, and add or update a test for it.
 
 By contributing you agree that your work is released under the [MIT license](LICENSE).

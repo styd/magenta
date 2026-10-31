@@ -15,8 +15,28 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Formatting
+        if: runner.os == 'Linux'
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "These files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
       - run: go vet ./...
-      - run: go test ./...
+      - name: Staticcheck
+        if: runner.os == 'Linux'
+        run: go run honnef.co/go/tools/cmd/staticcheck@2026.2.2 ./...
+      - name: Tests
+        shell: bash
+        run: |
+          # The race detector needs cgo on Windows, so it runs on Linux and macOS only.
+          if [ "$RUNNER_OS" = Windows ]; then
+            go test ./...
+          else
+            go test -race ./...
+          fi
       - name: Both commands install and run
         shell: bash
         run: |

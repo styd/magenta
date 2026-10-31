@@ -9,7 +9,7 @@ LDFLAGS := -s -w \
 
 export CGO_ENABLED := 0
 
-.PHONY: build test bench install vet fmt completions smoke
+.PHONY: build test race lint fmtcheck cover bench install vet fmt completions smoke
 
 build:
 	mkdir -p bin
@@ -18,6 +18,23 @@ build:
 test:
 	go vet ./...
 	go test ./...
+
+# The same tests with the race detector, as CI runs them on Linux and macOS.
+race:
+	go test -race ./...
+
+# What CI checks besides the tests: gofmt, go vet, and staticcheck.
+lint: fmtcheck vet
+	go run honnef.co/go/tools/cmd/staticcheck@2026.2.2 ./...
+
+# Fails and lists the files when any of them needs gofmt.
+fmtcheck:
+	@unformatted="$$(gofmt -l .)"; \
+	if [ -n "$$unformatted" ]; then echo "These files need gofmt:"; echo "$$unformatted"; exit 1; fi
+
+# Per package coverage, in the terminal.
+cover:
+	go test -cover ./...
 
 # End to end check of the pager and search with the real fzf, through tmux.
 smoke:

@@ -11,12 +11,15 @@
 ```
 make build      # bin/mgnt and bin/magenta, with the version stamped in
 make test       # go vet and go test ./...
+make race       # go test -race ./...
+make lint       # gofmt check, go vet, and staticcheck
+make cover      # test coverage for each package
 make bench      # the engine and start-up benchmarks
 make install    # go install of both commands
 make smoke      # end to end check of the pager and search with the real fzf, through tmux
 ```
 
-Before sending a change, run `gofmt -l .` (it should print nothing), `go vet ./...`, and `go test ./...`. For anything that touches goroutines, channels, or the terminal code, also run `go test -race ./...`. The whole suite takes under a minute. CI runs it on Linux, macOS, and Windows, then the smoke check on Linux and macOS, then Alpine (musl), then FreeBSD, OpenBSD, and NetBSD in virtual machines.
+Before sending a change, run `make lint` (`gofmt -l .` should print nothing, then `go vet ./...` and staticcheck) and `make test`. Also run `make race` (`go test -race ./...`), which CI runs on Linux and macOS. The whole suite takes under a minute. CI runs it on Linux, macOS, and Windows, then the smoke check on Linux and macOS, then Alpine (musl), then FreeBSD, OpenBSD, and NetBSD in virtual machines.
 
 Some tests are timing sensitive on a slow machine. `MGNT_STARTUP_BUDGET_MS=50 go test ./internal/mgnt` raises the start-up budget (10 ms by default) for the one test that measures it.
 
