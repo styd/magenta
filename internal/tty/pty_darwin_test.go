@@ -18,13 +18,15 @@ func openPty(t *testing.T) (*os.File, string) {
 	}
 	t.Cleanup(func() { m.Close() })
 	fd := m.Fd()
-	if _, _, e := unix.Syscall(unix.SYS_IOCTL, fd, unix.TIOCPTYGRANT, 0); e != 0 {
-		t.Fatal(e)
+	if err := unix.IoctlSetInt(int(fd), unix.TIOCPTYGRANT, 0); err != nil {
+		t.Fatal(err)
 	}
-	if _, _, e := unix.Syscall(unix.SYS_IOCTL, fd, unix.TIOCPTYUNLK, 0); e != 0 {
-		t.Fatal(e)
+	if err := unix.IoctlSetInt(int(fd), unix.TIOCPTYUNLK, 0); err != nil {
+		t.Fatal(err)
 	}
 	var name [128]byte
+	// x/sys has no wrapper for an ioctl that fills a buffer, so this one stays a raw syscall.
+	//lint:ignore SA1019 no wrapper for TIOCPTYGNAME
 	if _, _, e := unix.Syscall(unix.SYS_IOCTL, fd, unix.TIOCPTYGNAME, uintptr(unsafe.Pointer(&name[0]))); e != 0 {
 		t.Fatal(e)
 	}
