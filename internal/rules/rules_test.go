@@ -2,6 +2,8 @@ package rules
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -146,5 +148,63 @@ func TestDetectorOnlyCompilesDetect(t *testing.T) {
 	}
 	if _, err := f.Compile(); err == nil {
 		t.Error("Compile should fail")
+	}
+}
+
+func TestConfigLoader(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	var l Loader = ConfigLoader{}
+
+	ds, errs := l.Detectors()
+	if len(errs) != 0 {
+		t.Fatalf("errors: %v", errs)
+	}
+	if len(ds) != len(config.BuiltinNames(config.Rules)) {
+		t.Errorf("%d detectors for %d built-in rules", len(ds), len(config.BuiltinNames(config.Rules)))
+	}
+	for _, d := range ds {
+		if !d.Builtin {
+			t.Errorf("%s: not marked built-in", d.Name)
+		}
+	}
+
+	f, err := l.File("git-diff")
+	if err != nil || f.Name != "git-diff" {
+		t.Fatalf("File: %v, %v", f, err)
+	}
+	c, err := l.Load("git-diff")
+	if err != nil || c == nil {
+		t.Fatalf("Load: %v, %v", c, err)
+	}
+	if _, err := l.File("no-such-rule"); err == nil {
+		t.Error("File found a rule that does not exist")
+	}
+	if _, err := l.Load("no-such-rule"); err == nil {
+		t.Error("Load found a rule that does not exist")
+	}
+}
+
+func TestConfigLoaderSkipsBrokenFiles(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", dir)
+	rulesDir := config.UserDir(config.Rules)
+	if err := os.MkdirAll(rulesDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	files := map[string]string{
+		"bad-toml.toml":  "this is = = not toml",
+		"bad-regex.toml": "name = \"bad-regex\"\ndetect = [\"(\"]\n",
+	}
+	for name, data := range files {
+		if err := os.WriteFile(filepath.Join(rulesDir, name), []byte(data), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	ds, errs := ConfigLoader{}.Detectors()
+	if len(errs) != len(files) {
+		t.Errorf("want %d errors, got %v", len(files), errs)
+	}
+	if len(ds) != len(config.BuiltinNames(config.Rules)) {
+		t.Errorf("broken files should be skipped, got %d detectors", len(ds))
 	}
 }
