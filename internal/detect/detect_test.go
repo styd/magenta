@@ -1,6 +1,7 @@
 package detect
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -124,5 +125,22 @@ func TestThreshold(t *testing.T) {
 		if got := Threshold(n); got != want {
 			t.Errorf("Threshold(%d) = %d, want %d", n, got, want)
 		}
+	}
+}
+
+// A log with CRLF line endings is detected like one with LF, also by the
+// patterns that end in $.
+func TestCRLFLogIsDetected(t *testing.T) {
+	dets := builtinDetectors(t)
+	for _, name := range config.BuiltinNames(config.Rules) {
+		t.Run(name, func(t *testing.T) {
+			var crlf [][]byte
+			for _, l := range readLines(t, name, SampleLines) {
+				crlf = append(crlf, append(bytes.TrimSuffix(l, []byte("\r")), '\r'))
+			}
+			if res := Choose(dets, crlf, ""); res.Picked != name {
+				t.Errorf("picked %q, want %q", res.Picked, name)
+			}
+		})
 	}
 }

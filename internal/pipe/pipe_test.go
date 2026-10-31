@@ -96,8 +96,10 @@ func TestManOutputWithOverstrikes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// A Windows checkout may have turned the file into CRLF.
+	text := strings.ReplaceAll(string(plain), "\r\n", "\n")
 	var in strings.Builder
-	for _, l := range strings.Split(strings.TrimSuffix(string(plain), "\n"), "\n") {
+	for _, l := range strings.Split(strings.TrimSuffix(text, "\n"), "\n") {
 		switch {
 		case l != "" && l == strings.ToUpper(l) && !strings.HasPrefix(l, " ") && !strings.Contains(l, "("):
 			l = overstrike(l, true) // section headings are bold
@@ -115,7 +117,7 @@ func TestManOutputWithOverstrikes(t *testing.T) {
 	if p.Rule() != "man" {
 		t.Errorf("rule %q", p.Rule())
 	}
-	if visible(got) != string(plain) {
+	if visible(got) != text {
 		t.Errorf("overstrikes were not resolved:\n%q", visible(got))
 	}
 	if !strings.Contains(got, "\x1b[") {

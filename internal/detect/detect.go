@@ -2,6 +2,7 @@
 package detect
 
 import (
+	"bytes"
 	"sort"
 	"time"
 
@@ -67,6 +68,7 @@ func Choose(dets []*rules.Detector, lines [][]byte, filename string) Result {
 		s := Score{Name: d.Name}
 		hits := make([]int, len(d.Patterns))
 		for _, l := range lines {
+			l = bytes.TrimSuffix(l, []byte("\r")) // a CRLF log: $ should match before the CR
 			matched := false
 			for i, p := range d.Patterns {
 				if p.Re.Match(l) {

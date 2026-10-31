@@ -4,6 +4,7 @@
 package pipe
 
 import (
+	"bytes"
 	"time"
 
 	"github.com/styd/magenta/internal/colorscheme"
@@ -194,7 +195,7 @@ func (p *Pipeline) emitLine(text []byte, nl bool, emit Emit) {
 // recent lines.
 func (p *Pipeline) watch(text []byte) {
 	i := p.nrecent % len(p.recent)
-	p.recent[i] = render.Plain(p.recent[i][:0], text)
+	p.recent[i] = bytes.TrimSuffix(render.Plain(p.recent[i][:0], text), []byte("\r"))
 	p.nrecent++
 	if p.det != nil && p.matchesDetect(p.recent[i]) {
 		p.unmatched = 0
