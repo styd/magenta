@@ -84,6 +84,13 @@ Press `/` in the pager or in a followed log to search with fzf.
 
 `man mgnt` and `man magenta` show the manual pages. Homebrew, the `.deb`, `.rpm`, and `.apk` packages install them. `go install` does not, so for that, or for a release archive, read them with `man ./man/mgnt.1` from a checkout or the archive, or copy `man/*.1` into a directory on your `MANPATH`.
 
+This is `git log | mgnt` in a terminal:
+
+<img src="images/magenta-git-log.gif" alt="A screen recording of git log piped into mgnt in a terminal" width="700">
+
+Its colors do not match the design above exactly yet but will be made closer to it in the future.
+
+
 ## Documentation
 
 - [Paging and searching](docs/paging-and-search.md)
