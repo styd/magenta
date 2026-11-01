@@ -8,13 +8,13 @@ A viewer for logs and command output in your terminal. It colors text by what ki
 - **Searches** with the real fzf. Press `/` at any time, while new lines keep arriving.
 - **Previews** the lines around a result, so you can read a match in its context.
 
-This is the dark theme:
+This is the design of the dark theme:
 
-<img src="images/magenta-dark.png" alt="The magenta colorscheme in its dark theme, showing its palette, a git diff, a git log, and an application log" width="480">
+<img src="images/magenta-dark.png" alt="The design of the magenta colorscheme in its dark theme, showing its palette, a git diff, a git log, and an application log" width="480">
 
-And this is the light theme:
+And this is the design of the light theme:
 
-<img src="images/magenta-light.png" alt="The magenta colorscheme in its light theme, showing its palette, a git diff, a git log, and an application log" width="480">
+<img src="images/magenta-light.png" alt="The design of the magenta colorscheme in its light theme, showing its palette, a git diff, a git log, and an application log" width="480">
 
 ## Install
 
