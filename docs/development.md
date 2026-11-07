@@ -32,6 +32,7 @@ assets.go       embeds rules/ and colorschemes/ into both binaries
 rules/          built-in rule files (TOML)
 colorschemes/   built-in colorschemes (TOML)
 testdata/       one folder per built-in rule: in.log and the expected out.dark.ansi and out.light.ansi
+test/           the end to end smoke check, and streamlog, a made-up log that keeps growing
 internal/
   cli           the hints for using the wrong command, the version string
   config        config.toml, the config directory, finding built-in and user files
@@ -90,6 +91,19 @@ T send-keys -t t j j j        # keys
 T capture-pane -t t -p        # what is on the screen (add -e to see colors)
 T kill-server                 # only the private one
 ```
+
+## A log that keeps growing
+
+To try `mgnt` on a log that is still being written, `test/streamlog` appends a made-up unicorn log to a file you choose, with random but plausible lines. Most of it is Rails requests (`Started`, `Processing`, `Completed 200 OK in 45ms`, with the odd 302, 304, 404, and 422). Now and then a request fails and its exception comes with a backtrace from the controller down to the unicorn worker. In between are slow requests, worker timeouts and restarts, and the odd line without a logger prefix.
+
+```
+go run ./test/streamlog unicorn.log &       # runs until you stop it
+tail -f unicorn.log | mgnt
+go run ./test/streamlog - | mgnt            # or straight into mgnt, without a file
+go run ./test/streamlog -h                  # -interval, -workers, -lines, -seed, -truncate
+```
+
+Its tests check that `mgnt` takes the output for a unicorn log, so it stays in step with `rules/unicorn.toml`.
 
 ## Adding a rule file
 
